@@ -8,6 +8,7 @@ namespace APIApp.Repositories.JWT
 {
     public class JWTRepository : IJWT
     {
+
         #region Fields
         IConfiguration _configuration;
 
