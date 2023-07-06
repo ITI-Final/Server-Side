@@ -8,7 +8,6 @@ namespace APIApp.Repositories.JWT
 {
     public class JWTRepository : IJWT
     {
-
         #region Fields
         IConfiguration _configuration;
 
@@ -40,6 +39,5 @@ namespace APIApp.Repositories.JWT
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
         #endregion      
-
     }
 }
