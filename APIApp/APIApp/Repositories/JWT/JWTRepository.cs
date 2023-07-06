@@ -39,7 +39,7 @@ namespace APIApp.Repositories.JWT
                 );
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
-        #endregion
+        #endregion      
 
     }
 }
