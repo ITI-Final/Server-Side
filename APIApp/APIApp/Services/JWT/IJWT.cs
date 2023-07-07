@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace APIApp.Repositories.IEntities
+namespace APIApp.Services.JWT
 {
     public interface IJWT
     {
