@@ -42,12 +42,14 @@ namespace APIApp
             #region Connection
             // Add services to the container.
 
+
             builder.Services.AddDbContext<OLXContext>(db =>
-            db.UseSqlServer(
-                builder.Configuration.GetConnectionString("conn")
-                )
-            );
-            
+       db.UseSqlServer(
+           builder.Configuration.GetConnectionString("conn")
+           )
+       );
+
+
             #endregion
 
             #region JWT
