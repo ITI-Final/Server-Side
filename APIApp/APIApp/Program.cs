@@ -6,15 +6,11 @@ namespace APIApp
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Tokens;
-
+    using OlxDataAccess.Admins.Repository;
     using OlxDataAccess.Categories.Repositories;
     using OlxDataAccess.DBContext;
     using OlxDataAccess.Fields.Repositories;
-
-    using OlxDataAccess.Admins.Repository;
-    using OlxDataAccess.DBContext;
     using OlxDataAccess.Models;
-
     using System.Security.Claims;
     using System.Text;
     using System.Text.Json.Serialization;
@@ -104,12 +100,6 @@ namespace APIApp
 
             #region AutoMapper
             builder.Services.AddAutoMapper(typeof(Program));
-
-            //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-            //     builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-            //builder.Services.AddScoped<IFieldRepository, FieldRepository>();
-
-
             #endregion
 
             builder.Services.AddControllers();
