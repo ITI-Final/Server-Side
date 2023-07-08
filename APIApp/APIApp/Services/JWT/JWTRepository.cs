@@ -11,7 +11,7 @@ namespace APIApp.Repositories.JWT
         #region Fields
         IConfiguration _configuration;
 
-        #endregion
+        #endregion           
 
         #region Constructors
         public JWTRepository(IConfiguration configuration)

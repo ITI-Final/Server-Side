@@ -1,123 +1,142 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using APIApp.Models;
-//using APIApp.Repositories;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+// APIApp.Models;
+using APIApp.Repositories;
+using OlxDataAccess.Categories.Repositories;
+using OlxDataAccess.Models;
+using APIApp.DTOs.CategoryDTOs;
+using AutoMapper;
 
-//namespace APIApp.Controllers
-//{
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class CategoriesController : ControllerBase
-//    {
-//        protected readonly CategoryRepository _categoryRepository;
-//        public CategoriesController( CategoryRepository categoryRepository)
-//        {
-//            _categoryRepository = categoryRepository;
-            
-//        }
-//        // GET: api/Categories
-//        [HttpGet]
-//        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
-//        {
-//          if (_context.Categories == null)
-//          {
-//              return NotFound();
-//          }
-//            return await _context.Categories.ToListAsync();
-//        }
+namespace APIApp.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CategoriesController : ControllerBase
+    {
+        protected readonly ICategoryRepository _categoryRepository;
+        private readonly IMapper _mapper;
+        public CategoriesController(ICategoryRepository categoryRepository, IMapper mapper)
+        {
+            _categoryRepository = categoryRepository;
+            _mapper = mapper;
 
-//        // GET: api/Categories/5
-//        [HttpGet("{id}")]
-//        public async Task<ActionResult<Category>> GetCategory(int id)
-//        {
-//          if (_context.Categories == null)
-//          {
-//              return NotFound();
-//          }
-//            var category = await _context.Categories.FindAsync(id);
+        }
+        // GET: api/Categories
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        {
+            return Ok(await _categoryRepository.GetAll());
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Category>> getCatById(int id)
+        {
+            Category category = await _categoryRepository.GetById(id);
+            return Ok(category);
 
-//            if (category == null)
-//            {
-//                return NotFound();
-//            }
+        }
 
-//            return category;
-//        }
+        [HttpPost]
+        public async Task<ActionResult> AddCatrgories(CategoryPostDTO cat)
+        {
+            if (cat == null)
+            {
 
-//        // PUT: api/Categories/5
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPut("{id}")]
-//        public async Task<IActionResult> PutCategory(int id, Category category)
-//        {
-//            if (id != category.Id)
-//            {
-//                return BadRequest();
-//            }
+                return BadRequest();
+            }
+            #region DTOPost
+            //List<Choice> choicelist = new List<Choice>();
 
-//            _context.Entry(category).State = EntityState.Modified;
+            //List<Field> fieldList = new List<Field>();
+            //foreach (var item in cat.Fields)
+            //{
+            //    foreach (var i in item.Choices)
+            //    {
+            //        Choice choice = new Choice()
+            //        {
+            //            Id = i.Id,
+            //            Field_Id = i.Field_Id,
+            //            Label = i.Label,
+            //            Label_Ar = i.Label_Ar,
+            //            Slug = i.Slug,
+            //            Icon = i.Icon,
+            //        };
+            //        choicelist.Add(choice);
+            //    }
+            //    Field field = new Field()
+            //    {
+            //        Id = item.Id,
+            //        Name = item.Name,
+            //        Label = item.Label,
+            //        Label_Ar = item.Label_Ar,
+            //        Value_Type = item.Value_Type,
+            //        Choice_Type = item.Choice_Type,
+            //        Max_Length = item.Max_Length,
+            //        Min_Length = item.Min_Length,
+            //        Max_Value = item.Max_Value,
+            //        Min_Value = item.Min_Value,
+            //        Is_Required = item.Is_Required,
+            //        Parent_Id = item.Parent_Id,
+            //        Choices = choicelist
 
-//            try
-//            {
-//                await _context.SaveChangesAsync();
-//            }
-//            catch (DbUpdateConcurrencyException)
-//            {
-//                if (!CategoryExists(id))
-//                {
-//                    return NotFound();
-//                }
-//                else
-//                {
-//                    throw;
-//                }
-//            }
+            //    };
+            //    fieldList.Add(field);
+            //}
+            //Category c = new Category()
+            //{
+            //    Id = cat.Id,
+            //    Name = cat.Name,
+            //    Slug = cat.Slug,
+            //    Parent_Id = cat.Parent_Id,
+            //    Description = cat.Description,
+            //    Tags = cat.Tags,
+            //    Created_Date = cat.Created_Date,
+            //    Label = cat.Label,
+            //    Label_Ar = cat.Label_Ar,
+            //    Admin_Id = cat.Admin_Id,
+            //    Fields = fieldList
 
-//            return NoContent();
-//        }
+            //};
+            #endregion
 
-//        // POST: api/Categories
-//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-//        [HttpPost]
-//        public async Task<ActionResult<Category>> PostCategory(Category category)
-//        {
-//          if (_context.Categories == null)
-//          {
-//              return Problem("Entity set 'OLXContext.Categories'  is null.");
-//          }
-//            _context.Categories.Add(category);
-//            await _context.SaveChangesAsync();
+            #region autoMapper
+            var categories = _mapper.Map<Category>(cat);
+            #endregion
+            await _categoryRepository.Add(categories);
+            return Created("", categories);
 
-//            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
-//        }
+        }
+        [HttpPost]
+        [Route("main")]
+        public async Task<ActionResult> AddmainCategory(addMainCategoryDTO main)
+        {
+            var Main = _mapper.Map<Category>(main);
+            await _categoryRepository.Add(Main);
+            return NoContent();
+        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCategory(int id, CategoryPostDTO cat)
+        {
 
-//        // DELETE: api/Categories/5
-//        [HttpDelete("{id}")]
-//        public async Task<IActionResult> DeleteCategory(int id)
-//        {
-//            if (_context.Categories == null)
-//            {
-//                return NotFound();
-//            }
-//            var category = await _context.Categories.FindAsync(id);
-//            if (category == null)
-//            {
-//                return NotFound();
-//            }
+            if (id != cat.Id)
+            {
+                return NotFound();
+            }
 
-//            _context.Categories.Remove(category);
-//            await _context.SaveChangesAsync();
+            var category = _mapper.Map<Category>(cat);
+            await _categoryRepository.Update(id, category);
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCategory(int id)
+        {
+            await _categoryRepository.DeleteById(id);
+            return Ok();
+        }
 
-//            return NoContent();
-//        }
-
-//        private bool CategoryExists(int id)
-//        {
-//            return (_context.Categories?.Any(e => e.Id == id)).GetValueOrDefault();
-//        }
-//    }
-//}
+    }
+}
