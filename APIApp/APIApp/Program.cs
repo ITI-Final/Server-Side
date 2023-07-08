@@ -96,7 +96,8 @@ namespace APIApp
 
             #region Dependency Injection
             builder.Services.AddScoped<IJWT, JWTRepository>();
-
+            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+            builder.Services.AddScoped<IAuthentication<Admin>, AdminRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IFieldRepository, FieldRepository>();
             #endregion
@@ -105,10 +106,9 @@ namespace APIApp
             builder.Services.AddAutoMapper(typeof(Program));
 
             //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-                 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-            builder.Services.AddScoped<IFieldRepository, FieldRepository>();
-            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-            builder.Services.AddScoped<IAuthentication<Admin>, AdminRepository>();
+            //     builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            //builder.Services.AddScoped<IFieldRepository, FieldRepository>();
+
 
             #endregion
 
