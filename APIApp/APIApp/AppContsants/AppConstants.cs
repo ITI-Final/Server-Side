@@ -42,18 +42,17 @@ namespace APIApp.AppContsants
                 StatusMessage = "Login Successfully",
                 response = new
                 {
+                    id = adminLoginDTO.Id,
+                    name = adminLoginDTO.Name,
+                    email = adminLoginDTO.Email,
+                    permissions = adminLoginDTO.Permissions,
                     token = _token,
-                    role = "Admin",
-                    admin = new
-                    {
-                        id = adminLoginDTO.Id,
-                        name = adminLoginDTO.Name,
-                        email = adminLoginDTO.Email,
-                        permissions = adminLoginDTO.Permissions
-                    }
                 }
+
             };
         }
+
     }
 
 }
+

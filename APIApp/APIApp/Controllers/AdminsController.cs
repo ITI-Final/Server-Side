@@ -42,7 +42,6 @@ namespace APIApp.Controllers
         {
 
             #region Check Parameters 
-
             if (email == null || password == null) return BadRequest(AppConstants.GetBadRequest());
             #endregion
 
@@ -61,7 +60,8 @@ namespace APIApp.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim(type: "name", admin.Name),
-                new Claim(ClaimTypes.Role , "Admin")
+                new Claim(ClaimTypes.Role , "Admin"),
+                new Claim(type: "Id", admin.Id.ToString()),
             };
             #endregion
 
@@ -102,7 +102,6 @@ namespace APIApp.Controllers
         #endregion
 
         #endregion
-
 
         #region Get
 
@@ -210,6 +209,7 @@ namespace APIApp.Controllers
             }
         }
         #endregion
+
         #endregion
     }
 }

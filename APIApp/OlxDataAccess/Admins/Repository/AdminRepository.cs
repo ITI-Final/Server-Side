@@ -43,6 +43,7 @@ namespace OlxDataAccess.Admins.Repository
         {
             return await _context
                 .Admins
+                .Include(a => a.Permissions)
                 .FirstOrDefaultAsync(a => a.Email == email && a.Password == password);
         }
 
