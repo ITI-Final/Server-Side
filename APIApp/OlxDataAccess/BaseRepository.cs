@@ -47,14 +47,14 @@
             #endregion
 
             #region V2
-
-            #endregion
             var existingEntity = await _context.Set<T>().FindAsync(id);
             if (existingEntity == null)
                 return;
 
             _context.Entry(existingEntity).CurrentValues.SetValues(entity);
             await _context.SaveChangesAsync();
+            #endregion
+
         }
 
         #endregion
