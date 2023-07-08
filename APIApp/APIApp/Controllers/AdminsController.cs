@@ -1,8 +1,13 @@
 ﻿using APIApp.AppContsants;
+using APIApp.DTOs;
+using APIApp.Services.Authentication;
+using APIApp.Services.JWT;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OlxDataAccess.Admins.Repository;
 using OlxDataAccess.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace APIApp.Controllers
 {
@@ -11,17 +16,93 @@ namespace APIApp.Controllers
     public class AdminsController : ControllerBase
     {
         #region Fileds
+        readonly IJWT _jwt;
+        readonly IConfiguration _configuration;
         readonly IAdminRepository _adminRepository;
+        readonly IAuthentication<Admin> _authentication;
         #endregion
 
         #region Constructors
-        public AdminsController(IAdminRepository adminRepository)
+        public AdminsController(IJWT jWT, IConfiguration configuration, IAdminRepository adminRepository, IAuthentication<Admin> authentication)
         {
+            _jwt = jWT;
+            _configuration = configuration;
             _adminRepository = adminRepository;
+            _authentication = authentication;
         }
         #endregion
 
         #region Methods
+
+        #region Authentication
+        #region Login
+        // api/Admin/Login
+        [HttpPost("Login")]
+        public async Task<ActionResult> Login([FromForm] string email, [FromForm] string password)
+        {
+
+            #region Check Parameters 
+
+            if (email == null || password == null) return BadRequest(AppConstants.GetBadRequest());
+            #endregion
+
+            Admin? admin = await _authentication.Login(email, password);
+
+            #region Check is Existed
+
+            if (admin == null)
+                return BadRequest(AppConstants.GetBadRequest());
+            #endregion
+
+            #region Define Claims
+            List<Claim> claims = new List<Claim>()
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, _configuration[key: "Jwt:Subject"]),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                new Claim(type: "name", admin.Name),
+                new Claim(ClaimTypes.Role , "Admin")
+            };
+            #endregion
+
+            #region Response Formatter
+
+            ICollection<Permission> permissions = admin.Permissions;
+            List<PermissionDTO> permissionsDTO = new();
+
+            foreach (Permission permission in permissions)
+            {
+                PermissionDTO permissionDTO = new PermissionDTO
+                {
+                    Id = permission.Id,
+                    Section = permission.Section,
+                    Can_Add = permission.Can_Add,
+                    Can_Delete = permission.Can_Delete,
+                    Can_Edit = permission.Can_Edit,
+                    Can_View = permission.Can_View,
+                };
+                permissionsDTO.Add(permissionDTO);
+            }
+
+            AdminLoginDTO adminLoginDTO = new AdminLoginDTO()
+            {
+                Id = admin.Id,
+                Name = admin.Name,
+                Email = admin.Email,
+                Permissions = permissionsDTO,
+            };
+
+            object response = AppConstants.AdminLoginSuccessfully(adminLoginDTO, _jwt.GenentateToken(claims, numberOfDays: 1));
+
+            #endregion
+
+
+            return Ok(response);
+        }
+        #endregion
+
+        #endregion
+
 
         #region Get
 
@@ -58,6 +139,7 @@ namespace APIApp.Controllers
 
         #region Get By Id
         // GET: api/Admin/5
+        //[Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Admin>> GetAdminById(int id)
         {
@@ -65,7 +147,7 @@ namespace APIApp.Controllers
 
             Admin? admin = await _adminRepository.GetById(id);
 
-            if (admin == null) return NotFound(AppConstants.GetNotFount());
+            if (admin == null) return NotFound(AppConstants.GetNotFound());
 
             return admin;
         }
@@ -78,7 +160,8 @@ namespace APIApp.Controllers
         [HttpPost]
         public async Task<ActionResult<Admin>> PostCategory(Admin admin)
         {
-            if (await _adminRepository.GetAll() == null) return NotFound(AppConstants.GetNotFount());
+            if (await _authentication.IsEmailTakenAsync(admin.Email)) return BadRequest(AppConstants.GetEmailFound());
+            if (await _adminRepository.GetAll() == null) return NotFound(AppConstants.GetNotFound());
 
             await _adminRepository.Add(admin);
 
@@ -95,6 +178,7 @@ namespace APIApp.Controllers
 
             try
             {
+
                 await _adminRepository.Update(id, admin);
             }
             catch (DbUpdateConcurrencyException e)
@@ -114,7 +198,7 @@ namespace APIApp.Controllers
         {
             Admin? admin = await _adminRepository.GetById(id);
 
-            if (admin == null) return NotFound(AppConstants.GetNotFount());
+            if (admin == null) return NotFound(AppConstants.GetNotFound());
             try
             {
                 await _adminRepository.DeleteById(id);

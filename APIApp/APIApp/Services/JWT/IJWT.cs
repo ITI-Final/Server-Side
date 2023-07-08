@@ -4,6 +4,6 @@ namespace APIApp.Services.JWT
 {
     public interface IJWT
     {
-        public string GenentateToken(ICollection<Claim> claims);
+        public string GenentateToken(ICollection<Claim> claims, int numberOfDays);
     }
 }

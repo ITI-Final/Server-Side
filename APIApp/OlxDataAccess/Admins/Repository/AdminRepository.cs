@@ -38,6 +38,18 @@ namespace OlxDataAccess.Admins.Repository
         {
             return await _context.Admins.FirstOrDefaultAsync(q => q.Id == id);
         }
+
+        public async Task<Admin> Login(string email, string password)
+        {
+            return await _context
+                .Admins
+                .FirstOrDefaultAsync(a => a.Email == email && a.Password == password);
+        }
+
+        public async Task<bool> IsEmailTakenAsync(string email)
+        {
+            return await _context.Admins.AnyAsync(a => a.Email == email);
+        }
         #endregion
     }
 }
