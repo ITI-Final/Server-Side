@@ -1,13 +1,15 @@
-using APIApp.Repositories.IEntities;
-using APIApp.Repositories.JWT;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json.Serialization;
-
 namespace APIApp
 {
+    using APIApp.Repositories.JWT;
+    using APIApp.Services.JWT;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.IdentityModel.Tokens;
+    using OlxDataAccess.DBContext;
+    using System.Security.Claims;
+    using System.Text;
+    using System.Text.Json.Serialization;
+
     public class Program
     {
         public static void Main(string[] args)
@@ -40,11 +42,14 @@ namespace APIApp
             #region Connection
             // Add services to the container.
 
-            //builder.Services.AddDbContext<OLXContext>(db =>
-            //db.UseSqlServer(
-            //    builder.Configuration.GetConnectionString("conn")
-            //    )
-            //);
+
+            builder.Services.AddDbContext<OLXContext>(db =>
+       db.UseSqlServer(
+           builder.Configuration.GetConnectionString("conn")
+           )
+       );
+
+
             #endregion
 
             #region JWT
@@ -82,6 +87,7 @@ namespace APIApp
 
             #region Dependency Injection
             builder.Services.AddScoped<IJWT, JWTRepository>();
+            //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             #endregion
 
             builder.Services.AddControllers();
