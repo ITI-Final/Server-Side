@@ -38,11 +38,23 @@
         #region Update
         public virtual async Task Update(int id, T entity)
         {
-            if (!await IsExist(id))
+            #region V1
+            //if (!await IsExist(id))
+            //    return;
+
+            //_context.Entry(entity).State = EntityState.Modified;
+            //await _context.SaveChangesAsync();
+            #endregion
+
+            #region V2
+            var existingEntity = await _context.Set<T>().FindAsync(id);
+            if (existingEntity == null)
                 return;
 
-            _context.Entry(entity).State = EntityState.Modified;
+            _context.Entry(existingEntity).CurrentValues.SetValues(entity);
             await _context.SaveChangesAsync();
+            #endregion
+
         }
 
         #endregion
