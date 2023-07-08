@@ -51,7 +51,6 @@ namespace APIApp.AppContsants
 
             };
         }
-
     }
 
 }
