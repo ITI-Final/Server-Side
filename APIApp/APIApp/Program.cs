@@ -5,6 +5,7 @@ namespace APIApp
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.IdentityModel.Tokens;
+    using OlxDataAccess.Admins.Repository;
     using OlxDataAccess.DBContext;
     using System.Security.Claims;
     using System.Text;
@@ -88,6 +89,7 @@ namespace APIApp
             #region Dependency Injection
             builder.Services.AddScoped<IJWT, JWTRepository>();
             //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             #endregion
 
             builder.Services.AddControllers();
