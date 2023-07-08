@@ -1,4 +1,6 @@
-﻿namespace APIApp.AppContsants
+﻿using APIApp.DTOs;
+
+namespace APIApp.AppContsants
 {
     public static class AppConstants
     {
@@ -12,10 +14,15 @@
             StatusCode = 204,
             StatusMessage = "No Content.",
         };
-        public static object GetNotFount() => new
+        public static object GetNotFound() => new
         {
             StatusCode = 404,
             StatusMessage = "Not Found.",
+        };
+        public static object GetEmailFound() => new
+        {
+            StatusCode = 400,
+            StatusMessage = "This Email Is Already Taken.",
         };
         public static object UpdatedSuccessfully() => new
         {
@@ -27,6 +34,26 @@
             StatusCode = 200,
             StatusMessage = "Delete Successfully",
         };
+        public static object AdminLoginSuccessfully(AdminLoginDTO adminLoginDTO, string _token)
+        {
+            return new
+            {
+                StatusCode = 200,
+                StatusMessage = "Login Successfully",
+                response = new
+                {
+                    token = _token,
+                    role = "Admin",
+                    admin = new
+                    {
+                        id = adminLoginDTO.Id,
+                        name = adminLoginDTO.Name,
+                        email = adminLoginDTO.Email,
+                        permissions = adminLoginDTO.Permissions
+                    }
+                }
+            };
+        }
     }
 
 }
