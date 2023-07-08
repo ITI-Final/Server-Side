@@ -21,7 +21,7 @@ namespace APIApp.Repositories.JWT
         #endregion
 
         #region Methods
-        public string GenentateToken(ICollection<Claim> claims)
+        public string GenentateToken(ICollection<Claim> claims, int numberOfDays)
         {
             #region Secret Key
             SymmetricSecurityKey secritKey =
@@ -34,7 +34,7 @@ namespace APIApp.Repositories.JWT
                 _configuration["Jwt:Audience"],
                 claims: claims,
                 signingCredentials: signingCredentials,
-                expires: DateTime.Now.AddDays(1)
+                expires: DateTime.Now.AddDays(numberOfDays)
                 );
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
