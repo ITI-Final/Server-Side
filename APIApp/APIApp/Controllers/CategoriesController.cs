@@ -11,11 +11,13 @@ using OlxDataAccess.Categories.Repositories;
 using OlxDataAccess.Models;
 using APIApp.DTOs.CategoryDTOs;
 using AutoMapper;
+using APIApp.AppContsants;
 
 namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class CategoriesController : ControllerBase
     {
         protected readonly ICategoryRepository _categoryRepository;
@@ -27,6 +29,7 @@ namespace APIApp.Controllers
 
         }
         // GET: api/Categories
+        #region get
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
@@ -39,7 +42,32 @@ namespace APIApp.Controllers
             return Ok(category);
 
         }
+        [HttpGet]
+        [Route("Names")]
+        public async Task<ActionResult> getCatNames()
+        {
+            IEnumerable<Category> cat = await _categoryRepository.GetAll();
+            if (cat.Count() == 0) return NotFound(AppConstants.GetEmptyList());
+            List<GetCatNameDTO> getCatNameDTOs = new List<GetCatNameDTO>();
+            foreach (var item in cat)
+            {
 
+                GetCatNameDTO names = new GetCatNameDTO()
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Label = item.Label,
+                    Label_Ar = item.Label_Ar,
+                };
+                getCatNameDTOs.Add(names);
+            }
+            return Ok(getCatNameDTOs);
+
+
+        }
+        #endregion
+
+        #region Post
         [HttpPost]
         public async Task<ActionResult> AddCatrgories(CategoryPostDTO cat)
         {
@@ -118,6 +146,10 @@ namespace APIApp.Controllers
             await _categoryRepository.Add(Main);
             return NoContent();
         }
+        #endregion
+
+        #region Update
+
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategory(int id, CategoryPostDTO cat)
         {
@@ -131,12 +163,17 @@ namespace APIApp.Controllers
             await _categoryRepository.Update(id, category);
             return NoContent();
         }
+        #endregion
+
+        #region delete
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id)
         {
             await _categoryRepository.DeleteById(id);
             return Ok();
         }
+        #endregion
 
     }
 }
