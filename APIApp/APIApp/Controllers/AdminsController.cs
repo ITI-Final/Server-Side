@@ -1,14 +1,4 @@
-﻿using APIApp.AppContsants;
-using APIApp.DTOs;
-using APIApp.Services.Authentication;
-using APIApp.Services.JWT;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OlxDataAccess.Admins.Repository;
-using OlxDataAccess.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-
+﻿
 namespace APIApp.Controllers
 {
     [Route("api/[controller]")]

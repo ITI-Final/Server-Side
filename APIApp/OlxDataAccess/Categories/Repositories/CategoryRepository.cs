@@ -1,11 +1,6 @@
 ﻿namespace OlxDataAccess.Categories.Repositories
 {
-    using Microsoft.EntityFrameworkCore;
-    using OlxDataAccess;
-    using OlxDataAccess.DBContext;
-    using OlxDataAccess.Models;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+   
 
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {

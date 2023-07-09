@@ -1,6 +1,7 @@
 namespace APIApp
 {
     using APIApp.Repositories.JWT;
+    using APIApp.Services;
     using APIApp.Services.Authentication;
     using APIApp.Services.JWT;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,9 +9,11 @@ namespace APIApp
     using Microsoft.IdentityModel.Tokens;
     using OlxDataAccess.Admins.Repository;
     using OlxDataAccess.Categories.Repositories;
+    using OlxDataAccess.Companies.Repositories;
     using OlxDataAccess.DBContext;
     using OlxDataAccess.Fields.Repositories;
     using OlxDataAccess.Models;
+    using OlxDataAccess.Users.Repositories;
     using System.Security.Claims;
     using System.Text;
     using System.Text.Json.Serialization;
@@ -96,6 +99,9 @@ namespace APIApp
             builder.Services.AddScoped<IAuthentication<Admin>, AdminRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IFieldRepository, FieldRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<UserAuthentication>();
             #endregion
 
             #region AutoMapper
@@ -105,6 +111,18 @@ namespace APIApp
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            //var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy(MyAllowSpecificOrigins,
+            //                          policy =>
+            //                          {
+            //                              policy.AllowAnyOrigin()
+            //                                                  .AllowAnyHeader()
+            //                                                  .AllowAnyMethod();
+            //                          });
+            //});
 
             WebApplication? app = builder.Build();
 

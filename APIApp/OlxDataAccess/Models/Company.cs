@@ -12,7 +12,8 @@ namespace OlxDataAccess.Models
         public string Cover_Url { get; set; }
         [StringLength(50)]
         public string Tax_Number { get; set; }
-        public int Owner { get; set; }
+        //userid
+        public int OwnerID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? Register_Date { get; set; }
 

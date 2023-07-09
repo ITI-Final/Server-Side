@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-// APIApp.Models;
-using APIApp.Repositories;
-using OlxDataAccess.Categories.Repositories;
-using OlxDataAccess.Models;
-using APIApp.DTOs.CategoryDTOs;
-using AutoMapper;
-
+﻿
 namespace APIApp.Controllers
 {
     [Route("api/[controller]")]

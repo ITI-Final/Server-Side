@@ -1,8 +1,5 @@
-﻿using APIApp.DTOs.CategoryDTOs;
-using AutoMapper;
-using OlxDataAccess.Models;
-
-namespace APIApp.Services
+﻿
+namespace APIApp.AutoMapper
 {
     public class AppMapperProfile : Profile
     {
@@ -12,6 +9,9 @@ namespace APIApp.Services
             CreateMap<FieldPostDTO, Field>();
             CreateMap<ChoicePostDTO, Choice>();
             CreateMap<addMainCategoryDTO, Category>();
+            CreateMap<CompanyDTO, Company>();
+            CreateMap<UserDto, User>();
+            CreateMap<UserLoginDTO, User>();
 
         }
     }

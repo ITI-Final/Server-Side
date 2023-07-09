@@ -1,4 +1,5 @@
 ﻿using APIApp.DTOs;
+using NuGet.Common;
 
 namespace APIApp.AppContsants
 {
@@ -49,6 +50,17 @@ namespace APIApp.AppContsants
                     token = _token,
                 }
 
+            };
+        }
+
+        public static object UserLoginSuccessfully(UserLoginDTO userLoginDTO, string _token)
+        {
+
+            return new
+            {
+                StatusCode = 200,
+                StatusMessage = "Login Successfully",
+                Token = _token,
             };
         }
     }

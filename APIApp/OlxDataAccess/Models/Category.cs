@@ -41,7 +41,7 @@ namespace OlxDataAccess.Models
         [InverseProperty("InverseParent")]
         public virtual Category Parent { get; set; }
         [InverseProperty("Cat")]
-        public virtual ICollection<Field> Fields { get; set; }
+        public virtual ICollection<Field>? Fields { get; set; }
         [InverseProperty("Parent")]
         public virtual ICollection<Category> InverseParent { get; set; }
         [InverseProperty("Cat")]

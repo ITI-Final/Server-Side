@@ -1,9 +1,4 @@
-﻿using APIApp.DTOs.CategoryDTOs;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using OlxDataAccess.Fields.Repositories;
-using OlxDataAccess.Models;
+﻿
 
 namespace APIApp.Controllers
 {

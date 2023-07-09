@@ -1,6 +1,6 @@
 ﻿namespace OlxDataAccess
 {
-    using OlxDataAccess.DBContext;
+   
 
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {

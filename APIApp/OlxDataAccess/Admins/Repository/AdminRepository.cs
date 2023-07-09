@@ -1,7 +1,4 @@
-﻿using OlxDataAccess.DBContext;
-using OlxDataAccess.Models;
-
-namespace OlxDataAccess.Admins.Repository
+﻿namespace OlxDataAccess.Admins.Repository
 {
     public class AdminRepository : BaseRepository<Admin>, IAdminRepository
     {

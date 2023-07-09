@@ -126,7 +126,7 @@ public partial class OLXContext : DbContext
         {
             entity.HasOne(d => d.OwnerNavigation)
                 .WithMany(p => p.Companies)
-                .HasForeignKey(d => d.Owner)
+                .HasForeignKey(d => d.OwnerID)
                 .HasConstraintName("FK_company_user");
         });
 

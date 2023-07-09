@@ -1,0 +1,12 @@
+﻿global using Microsoft.AspNetCore.Mvc;
+global using OlxDataAccess.Categories.Repositories;
+global using APIApp.AppContsants;
+global using APIApp.DTOs;
+global using APIApp.Services.Authentication;
+global using APIApp.Services.JWT;
+global using Microsoft.EntityFrameworkCore;
+global using OlxDataAccess.Admins.Repository;
+global using System.IdentityModel.Tokens.Jwt;
+global using System.Security.Claims;
+global using OlxDataAccess.Fields.Repositories;
+global using OlxDataAccess.Users.Repositories;
