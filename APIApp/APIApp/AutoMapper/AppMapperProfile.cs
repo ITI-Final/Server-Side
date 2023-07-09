@@ -9,6 +9,8 @@ namespace APIApp.AutoMapper
             CreateMap<FieldPostDTO, Field>();
             CreateMap<ChoicePostDTO, Choice>();
             CreateMap<addMainCategoryDTO, Category>();
+            CreateMap<GovernorateDTO, Governorate>();
+            CreateMap<CitiesDTO, City>();
             CreateMap<CompanyDTO, Company>();
             CreateMap<UserDto, User>();
             CreateMap<UserLoginDTO, User>();
