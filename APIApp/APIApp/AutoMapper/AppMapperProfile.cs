@@ -1,4 +1,5 @@
-﻿
+﻿using APIApp.DTOs.FavouriteDTOs;
+
 namespace APIApp.AutoMapper
 {
     public class AppMapperProfile : Profile
@@ -14,7 +15,7 @@ namespace APIApp.AutoMapper
             CreateMap<CompanyDTO, Company>();
             CreateMap<UserDto, User>();
             CreateMap<UserLoginDTO, User>();
-
+            CreateMap<FavouriteDTO, Favorite>();
         }
     }
 }

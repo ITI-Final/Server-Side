@@ -1,7 +1,6 @@
 ﻿namespace APIApp.Controllers
 {
     using APIApp.DTOs.UserDTOs;
-    using APIApp.Services;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -9,13 +8,18 @@
     {
         protected readonly IUserRepository _userRepository;
         protected readonly IMapper _mapper;
-        protected readonly UserAuthentication _userAuthentication;
+        protected readonly IAuthentication<User> _userAuthentication;
+        protected readonly IConfiguration _configuration;
+        protected readonly IJWT _jwt;
 
-        public UserController(IUserRepository userRepository, IMapper mapper, UserAuthentication userAuthentication)
+
+        public UserController(IUserRepository userRepository, IMapper mapper, IAuthentication<User> userAuthentication, IConfiguration configuration, IJWT jwt)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _userAuthentication = userAuthentication;
+            _configuration = configuration;
+            _jwt = jwt;
         }
 
         [HttpGet]
@@ -31,11 +35,12 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser( UserDto userDto)
+        public async Task<IActionResult> AddUser(UserDto userDto)
         {
             try
             {
-              var user = _mapper.Map<User>(userDto);
+                if (await _userRepository.IsEmailTakenAsync(userDto.Email)) return BadRequest(AppConstants.GetEmailFound());
+                var user = _mapper.Map<User>(userDto);
                 await _userRepository.Add(user);
 
                 return Ok();
@@ -71,18 +76,40 @@
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginDTO userLoginDTO)
+        public async Task<IActionResult> Login([FromForm] UserLoginDTO userLoginDTO)
         {
-            var user = _mapper.Map<User>(userLoginDTO);
 
-             await _userAuthentication.Authenticate(user.Email, user.Password);
+            #region Check Parameters 
+            if (userLoginDTO.Email == null || userLoginDTO.Password == null) return BadRequest(AppConstants.GetBadRequest());
+            #endregion
+
+            User? user = await _userRepository.Login(userLoginDTO.Email, userLoginDTO.Password);
+
+            #region Check is Existed
 
             if (user == null)
-                return Unauthorized();
+                return BadRequest(AppConstants.GetBadRequest());
+            #endregion
 
-            var token =_userAuthentication.GenerateJwtToken(user);
-            //return Ok(new { Token = token });
-            return Ok(AppConstants.UserLoginSuccessfully(userLoginDTO, token));
+            #region Define Claims
+            List<Claim> claims = new List<Claim>()
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, _configuration[key: "Jwt:Subject"]),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                new Claim(type: "name", user.Name),
+                new Claim(ClaimTypes.Role , "User"),
+                new Claim(type: "Id", user.Id.ToString()),
+            };
+            #endregion
+
+            #region Response Formatter
+            object response = AppConstants.UserLoginSuccessfully(userLoginDTO, _jwt.GenentateToken(claims, numberOfDays: 1));
+
+            #endregion
+
+
+            return Ok(response);
         }
     }
 }

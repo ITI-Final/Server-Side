@@ -98,7 +98,7 @@ namespace APIApp.Controllers
         #region Get All
         // GET: api/Admins
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Admin>>> GetAll()
         {
             IEnumerable<Admin>? admins = await _adminRepository.GetAll();
             if (admins.Count() == 0) return NotFound(AppConstants.GetEmptyList());
@@ -167,7 +167,6 @@ namespace APIApp.Controllers
 
             try
             {
-
                 await _adminRepository.Update(id, admin);
             }
             catch (DbUpdateConcurrencyException e)

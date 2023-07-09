@@ -1,11 +1,11 @@
 ﻿namespace OlxDataAccess
 {
-   
+
 
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
         #region Fileds
-        private readonly OLXContext _context;
+        protected readonly OLXContext _context;
         protected readonly DbSet<T> _dbSet;
         #endregion
 
