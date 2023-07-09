@@ -1,12 +1,7 @@
 ﻿namespace OlxDataAccess.Users.Repositories
 {
-
-
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-
-
-
         public UserRepository(OLXContext context) : base(context)
         {
         }
@@ -31,6 +26,12 @@
         public async Task<bool> IsEmailTakenAsync(string email)
         {
             return await _context.Users.AnyAsync(a => a.Email == email);
+        }
+
+        public async Task Register(User user)
+        {
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
         }
     }
 }

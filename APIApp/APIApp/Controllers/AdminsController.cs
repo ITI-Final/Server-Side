@@ -27,10 +27,9 @@ namespace APIApp.Controllers
         #region Authentication
         #region Login
         // api/Admin/Login
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<ActionResult> Login([FromForm] string email, [FromForm] string password)
         {
-
             #region Check Parameters 
             if (email == null || password == null) return BadRequest(AppConstants.GetBadRequest());
             #endregion
@@ -147,7 +146,7 @@ namespace APIApp.Controllers
         #region Add
         // POST: api/Admin
         [HttpPost]
-        public async Task<ActionResult<Admin>> PostCategory(Admin admin)
+        public async Task<ActionResult<Admin>> Add(Admin admin)
         {
             if (await _authentication.IsEmailTakenAsync(admin.Email)) return BadRequest(AppConstants.GetEmailFound());
             if (await _adminRepository.GetAll() == null) return NotFound(AppConstants.GetNotFound());
@@ -161,7 +160,7 @@ namespace APIApp.Controllers
         #region Update
         // PUT: api/Admin/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(int id, Admin admin)
+        public async Task<IActionResult> Update(int id, Admin admin)
         {
             if (id != admin.Id) return BadRequest(AppConstants.GetBadRequest());
 
@@ -182,7 +181,7 @@ namespace APIApp.Controllers
         #region Delete
         // DELETE: api/Admin/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             Admin? admin = await _adminRepository.GetById(id);
 

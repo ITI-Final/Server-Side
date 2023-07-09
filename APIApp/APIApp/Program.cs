@@ -14,6 +14,7 @@ namespace APIApp
     using OlxDataAccess.Fields.Repositories;
     using OlxDataAccess.Governorates.Repositories;
     using OlxDataAccess.Models;
+    using OlxDataAccess.Posts.Repositories;
     using OlxDataAccess.Users.Repositories;
     using System.Security.Claims;
     using System.Text;
@@ -106,6 +107,7 @@ namespace APIApp
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
             builder.Services.AddScoped<UserAuthentication>();
             builder.Services.AddScoped<IGovernorateRepository, GovernorateRepository>();
+            builder.Services.AddScoped<IPostRepository, PostRepository>();
             #endregion
 
             #region AutoMapper

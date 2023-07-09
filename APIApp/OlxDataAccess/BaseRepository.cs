@@ -1,7 +1,5 @@
 ﻿namespace OlxDataAccess
 {
-
-
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
         #region Fileds

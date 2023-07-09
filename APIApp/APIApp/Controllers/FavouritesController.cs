@@ -5,7 +5,7 @@ namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FavouriteController : ControllerBase
+    public class FavouritesController : ControllerBase
     {
 
         #region Fileds
@@ -14,7 +14,7 @@ namespace APIApp.Controllers
         #endregion
 
         #region Constructors
-        public FavouriteController(IFavouriteRepositort favouriteRepositort, IMapper mapper)
+        public FavouritesController(IFavouriteRepositort favouriteRepositort, IMapper mapper)
         {
             _favouriteRepositort = favouriteRepositort;
             _mapper = mapper;

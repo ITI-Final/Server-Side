@@ -4,11 +4,11 @@
 
     [Route("api/[controller]")]
     [ApiController]
-    public class CompanyController : ControllerBase
+    public class CompaniesController : ControllerBase
     {
         protected readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
-        public CompanyController(ICompanyRepository companyRepository, IMapper mapper)
+        public CompaniesController(ICompanyRepository companyRepository, IMapper mapper)
         {
             _companyRepository = companyRepository;
             _mapper = mapper;

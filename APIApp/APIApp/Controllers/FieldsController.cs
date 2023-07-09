@@ -4,12 +4,12 @@ namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FieldController : ControllerBase
+    public class FieldsController : ControllerBase
     {
         private readonly IFieldRepository _fieldRepository;
         private readonly IMapper _mapper;
 
-        public FieldController(IFieldRepository fieldRepository, IMapper mapper)
+        public FieldsController(IFieldRepository fieldRepository, IMapper mapper)
         {
             _fieldRepository = fieldRepository;
             _mapper = mapper;
