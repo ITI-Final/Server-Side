@@ -1,6 +1,5 @@
 ﻿namespace APIApp.Services
 {
-    using APIApp.Services.Authentication;
     using Microsoft.IdentityModel.Tokens;
     using System.Text;
 
@@ -24,21 +23,13 @@
                 {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Email)
+
             }),
                 Expires = DateTime.Now.AddDays(10),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
-        }
-
-        public async Task<User> Authenticate(string username, string password)
-        {
-            var user = await _userRepository.GetUserByEmail(username);
-            if (user == null || password == null)
-                return null;
-
-            return user;
         }
     }
 }

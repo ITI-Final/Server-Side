@@ -98,9 +98,11 @@ namespace APIApp
             builder.Services.AddScoped<IJWT, JWTRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IAuthentication<Admin>, AdminRepository>();
+            builder.Services.AddScoped<IAuthentication<User>, UserRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IFieldRepository, FieldRepository>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
             builder.Services.AddScoped<UserAuthentication>();
             builder.Services.AddScoped<IGovernorateRepository, GovernorateRepository>();
@@ -114,17 +116,7 @@ namespace APIApp
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            //var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy(MyAllowSpecificOrigins,
-            //                          policy =>
-            //                          {
-            //                              policy.AllowAnyOrigin()
-            //                                                  .AllowAnyHeader()
-            //                                                  .AllowAnyMethod();
-            //                          });
-            //});
+
 
             WebApplication? app = builder.Build();
 
