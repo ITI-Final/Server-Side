@@ -9,5 +9,15 @@
             _dbContext = context;
         }
         #endregion
+
+
+        #region GetById
+        public override Task<Field> GetById(int id)
+        {
+            return _dbContext.Fields.Include(o => o.Choices).FirstOrDefaultAsync(o => o.Id == id)!;
+        }
+        #endregion
     }
+
+
 }

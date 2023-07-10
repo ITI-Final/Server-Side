@@ -15,6 +15,16 @@ namespace APIApp.Controllers
             _mapper = mapper;
         }
 
+        #region get
+        #region GETbyId
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetById(int id)
+        {
+            return Ok(await _fieldRepository.GetById(id));
+        }
+        #endregion
+        #endregion
+
         [HttpPut("{id}")]
         public async Task<ActionResult> update(FieldPostDTO field, int id)
         {
