@@ -1,5 +1,5 @@
-﻿using APIApp.DTOs.GovernorateDTOs;
-using OlxDataAccess.Governorates.Repositories;
+﻿using OlxDataAccess.Governorates.Repositories;
+
 namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
@@ -22,6 +22,7 @@ namespace APIApp.Controllers
         #region methods
 
         #region GET
+
         #region GetAll
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAll()
@@ -56,7 +57,8 @@ namespace APIApp.Controllers
                 Governorates.Add(governorateDTO);
             }
 
-            if (AllGovernorates.Count() == 0) return NotFound(AppConstants.GetEmptyList());
+            if (AllGovernorates.Count() == 0)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
             #region V2
             //    var governorates = await _governorateRepository.GetAll()
@@ -95,7 +97,7 @@ namespace APIApp.Controllers
 
             #endregion
 
-            return Ok(AllGovernorates);
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, AllGovernorates));
         }
         #region V4
         //[HttpGet]
@@ -115,28 +117,29 @@ namespace APIApp.Controllers
         #endregion
 
         #endregion
+
         #region GetById
         [HttpGet("{id}")]
         public async Task<ActionResult<Governorate>> GetById(int id)
         {
             Governorate governorate = await _governorateRepository.GetById(id);
             if (governorate == null)
-            {
-                return NotFound(AppConstants.GetNotFound());
-            }
-            return Ok(governorate);
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, governorate));
         }
         #endregion
+
         #endregion
 
-        #region post
+        #region Add
         [HttpPost]
         public async Task<ActionResult> Add(GovernorateDTO governorateDTO)
         {
-            var gover = _mapper.Map<Governorate>(governorateDTO);
-            await _governorateRepository.Add(gover);
-            return Created("", gover);
+            Governorate? governorate = _mapper.Map<Governorate>(governorateDTO);
+            await _governorateRepository.Add(governorate);
 
+            return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, governorate));
         }
         #endregion
 
@@ -145,25 +148,19 @@ namespace APIApp.Controllers
         public async Task<ActionResult> update(int id, GovernorateDTO governorateDTO)
         {
             if (await _governorateRepository.GetById(id) == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+            Governorate? governorate = _mapper.Map<Governorate>(governorateDTO);
+            try
             {
-                return NotFound(AppConstants.GetNotFound());
+                await _governorateRepository.Update(id, governorate);
             }
-            else
+            catch (DbUpdateConcurrencyException e)
             {
-                try
-                {
-
-                    var gover = _mapper.Map<Governorate>(governorateDTO);
-                    await _governorateRepository.Update(id, gover);
-                }
-                catch (DbUpdateConcurrencyException e)
-                {
-                    return Problem(statusCode: 500, title: e.Message);
-                }
-
-                return Ok(AppConstants.UpdatedSuccessfully());
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
             }
 
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, governorate));
         }
         #endregion
 
@@ -171,13 +168,16 @@ namespace APIApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> delete(int id)
         {
-            Governorate? gover = await _governorateRepository.GetById(id);
+            Governorate? governrate = await _governorateRepository.GetById(id);
 
-            if (gover == null) return NotFound(AppConstants.GetNotFound());
+            if (governrate == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
             try
             {
                 await _governorateRepository.DeleteById(id);
-                return Ok(AppConstants.DeleteSuccessfully());
+                return Ok(AppConstants.Response<string>(AppConstants.successCode, AppConstants.deleteSuccessMessage));
+
             }
             catch (Exception e)
             {

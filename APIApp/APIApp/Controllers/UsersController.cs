@@ -1,6 +1,8 @@
 ﻿namespace APIApp.Controllers
 {
     using APIApp.DTOs.UserDTOs;
+    using APIApp.Services.Authentication;
+    using OlxDataAccess.Models;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -33,15 +35,12 @@
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromForm] UserLoginDTO userLoginDTO)
         {
-            #region Check Parameters 
-            if (userLoginDTO.Email == null || userLoginDTO.Password == null) return BadRequest(AppConstants.GetBadRequest());
-            #endregion
 
             User? user = await _userRepository.Login(userLoginDTO.Email, userLoginDTO.Password);
 
             #region Check is Existed
             if (user == null)
-                return BadRequest(AppConstants.GetBadRequest());
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
             #endregion
 
             #region Define Claims
@@ -56,11 +55,8 @@
             };
             #endregion
 
-            #region Response Formatter
-            object response = AppConstants.UserLoginSuccessfully(userLoginDTO, _jwt.GenentateToken(claims, numberOfDays: 1));
-            #endregion
 
-            return Ok(response);
+            return Ok(AppConstants.LoginSuccessfully(userLoginDTO, _jwt.GenentateToken(claims, numberOfDays: 1)));
         }
         #endregion
 
@@ -71,15 +67,14 @@
         {
             try
             {
-                var user = _mapper.Map<User>(userRegister);
+                User? user = _mapper.Map<User>(userRegister);
                 await _userRepository.Add(user);
 
-                return Ok();
-
+                return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, user));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while adding the user.");
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
             }
 
         }
@@ -91,13 +86,26 @@
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
-            return Ok(await _userRepository.GetAll());
+            IEnumerable<User>? users = await _userRepository.GetAll();
+
+            if (users.Count() == 0)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, users));
         }
 
         [HttpGet("id")]
         public async Task<IActionResult> GetUserById(int id)
         {
-            return Ok(await _userRepository.GetById(id));
+            if (await _userRepository.GetAll() == null)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
+            User? user = await _userRepository.GetById(id);
+
+            if (user == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, user));
         }
         #endregion
 
@@ -105,18 +113,19 @@
         [HttpPost]
         public async Task<IActionResult> AddUser(UserDto userDto)
         {
+            if (await _userRepository.IsEmailTakenAsync(userDto.Email))
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.emailIsAlreadyMessage));
+
             try
             {
-                if (await _userRepository.IsEmailTakenAsync(userDto.Email)) return BadRequest(AppConstants.GetEmailFound());
-                var user = _mapper.Map<User>(userDto);
+                User? user = _mapper.Map<User>(userDto);
                 await _userRepository.Add(user);
 
-                return Ok();
-
+                return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, user));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while adding the user.");
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
             }
 
         }
@@ -126,12 +135,15 @@
         [HttpPut("id")]
         public async Task<IActionResult> UpdateUser([FromBody] UserDto userDto, int id)
         {
+            if (id != userDto.Id)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
             try
             {
-                var user = _mapper.Map<User>(userDto);
+                User? user = _mapper.Map<User>(userDto);
                 await _userRepository.Update(id, user);
 
-                return Ok();
+                return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, user));
             }
             catch (Exception ex)
             {
@@ -146,7 +158,20 @@
         [HttpDelete("id")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            return Ok(_userRepository.DeleteById(id));
+            User? user = await _userRepository.GetById(id);
+
+            if (user == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+            try
+            {
+                await _userRepository.DeleteById(id);
+                return Ok(AppConstants.Response<string>(AppConstants.successCode, AppConstants.deleteSuccessMessage));
+            }
+            catch (Exception e)
+            {
+                return Problem(statusCode: 500, title: e.Message);
+            }
         }
         #endregion
 
