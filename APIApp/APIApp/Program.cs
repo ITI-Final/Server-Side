@@ -11,6 +11,7 @@ namespace APIApp
     using OlxDataAccess.Categories.Repositories;
     using OlxDataAccess.Companies.Repositories;
     using OlxDataAccess.DBContext;
+    using OlxDataAccess.Favourits.FavouritRepositories;
     using OlxDataAccess.Fields.Repositories;
     using OlxDataAccess.Governorates.Repositories;
     using OlxDataAccess.Models;
@@ -52,13 +53,11 @@ namespace APIApp
             #region Connection
             // Add services to the container.
 
-
             builder.Services.AddDbContext<OLXContext>(db =>
-       db.UseSqlServer(
-           builder.Configuration.GetConnectionString("conn")
-           )
-       );
-
+            db.UseSqlServer(
+                builder.Configuration.GetConnectionString("conn")
+                )
+            );
 
             #endregion
 
@@ -108,6 +107,7 @@ namespace APIApp
             builder.Services.AddScoped<UserAuthentication>();
             builder.Services.AddScoped<IGovernorateRepository, GovernorateRepository>();
             builder.Services.AddScoped<IPostRepository, PostRepository>();
+            builder.Services.AddScoped<IFavouriteRepositort, FavouriteRepositort>();
             #endregion
 
             #region AutoMapper

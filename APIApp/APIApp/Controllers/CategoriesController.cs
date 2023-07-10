@@ -1,5 +1,4 @@
-﻿
-namespace APIApp.Controllers
+﻿namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -14,30 +13,49 @@ namespace APIApp.Controllers
             _mapper = mapper;
 
         }
+
+
+        #region Methods
+
+        #endregion
         // GET: api/Categories
         #region get
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            return Ok(await _categoryRepository.GetAll());
+            IEnumerable<Category>? categories = await _categoryRepository.GetAll();
+            if (categories.Count() == 0)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, categories));
         }
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> getCatById(int id)
+        public async Task<ActionResult<Category>> GetCategoryById(int id)
         {
-            Category category = await _categoryRepository.GetById(id);
-            return Ok(category);
+            if (await _categoryRepository.GetAll() == null)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
+            Category? category = await _categoryRepository.GetById(id);
+
+            if (category == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, category));
         }
-        [HttpGet]
-        [Route("Names")]
-        public async Task<ActionResult> getCatNames()
-        {
-            IEnumerable<Category> cat = await _categoryRepository.GetAll();
-            if (cat.Count() == 0) return NotFound(AppConstants.GetEmptyList());
-            List<GetCatNameDTO> getCatNameDTOs = new List<GetCatNameDTO>();
-            foreach (var item in cat)
-            {
 
+
+        [HttpGet]
+        [Route("names")]
+        public async Task<ActionResult> GetCategoriesNames()
+        {
+            IEnumerable<Category> category = await _categoryRepository.GetAll();
+            if (category.Count() == 0)
+                NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+            List<GetCatNameDTO> getCategortNameDTOs = new List<GetCatNameDTO>();
+            foreach (Category item in category)
+            {
                 GetCatNameDTO names = new GetCatNameDTO()
                 {
                     Id = item.Id,
@@ -45,28 +63,26 @@ namespace APIApp.Controllers
                     Label = item.Label,
                     Label_Ar = item.Label_Ar,
                 };
-                getCatNameDTOs.Add(names);
+                getCategortNameDTOs.Add(names);
             }
-            return Ok(getCatNameDTOs);
 
-
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, getCategortNameDTOs));
         }
         #endregion
 
         #region Post
         [HttpPost]
-        public async Task<ActionResult> AddCatrgories(CategoryPostDTO cat)
+        public async Task<ActionResult> AddCatrgories(CategoryPostDTO category)
         {
-            if (cat == null)
-            {
+            if (category == null)
+                //return BadRequest();
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-                return BadRequest();
-            }
             #region DTOPost
             //List<Choice> choicelist = new List<Choice>();
 
             //List<Field> fieldList = new List<Field>();
-            //foreach (var item in cat.Fields)
+            //foreach (var item in category.Fields)
             //{
             //    foreach (var i in item.Choices)
             //    {
@@ -102,52 +118,56 @@ namespace APIApp.Controllers
             //}
             //Category c = new Category()
             //{
-            //    Id = cat.Id,
-            //    Name = cat.Name,
-            //    Slug = cat.Slug,
-            //    Parent_Id = cat.Parent_Id,
-            //    Description = cat.Description,
-            //    Tags = cat.Tags,
-            //    Created_Date = cat.Created_Date,
-            //    Label = cat.Label,
-            //    Label_Ar = cat.Label_Ar,
-            //    Admin_Id = cat.Admin_Id,
+            //    Id = category.Id,
+            //    Name = category.Name,
+            //    Slug = category.Slug,
+            //    Parent_Id = category.Parent_Id,
+            //    Description = category.Description,
+            //    Tags = category.Tags,
+            //    Created_Date = category.Created_Date,
+            //    Label = category.Label,
+            //    Label_Ar = category.Label_Ar,
+            //    Admin_Id = category.Admin_Id,
             //    Fields = fieldList
 
             //};
             #endregion
 
             #region autoMapper
-            var categories = _mapper.Map<Category>(cat);
+            Category? categories = _mapper.Map<Category>(category);
             #endregion
             await _categoryRepository.Add(categories);
-            return Created("", categories);
-
+            //return Created("", categories);
+            return Created("GetCategories", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, categories));
         }
+
         [HttpPost]
         [Route("main")]
         public async Task<ActionResult> AddmainCategory(addMainCategoryDTO main)
         {
             var Main = _mapper.Map<Category>(main);
             await _categoryRepository.Add(Main);
-            return NoContent();
+
+            //return NoContent();
+            return Created("GetCategories", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, Main));
         }
         #endregion
 
         #region Update
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCategory(int id, CategoryPostDTO cat)
+        public async Task<ActionResult> UpdateCategory(int id, CategoryPostDTO category)
         {
+            if (id != category.Id)
+                //return NotFound();
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
-            if (id != cat.Id)
-            {
-                return NotFound();
-            }
 
-            var category = _mapper.Map<Category>(cat);
-            await _categoryRepository.Update(id, category);
-            return NoContent();
+
+            Category? category1 = _mapper.Map<Category>(category);
+            await _categoryRepository.Update(id, category1);
+            //return NoContent();
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, category1));
         }
         #endregion
 
@@ -157,7 +177,7 @@ namespace APIApp.Controllers
         public async Task<ActionResult> DeleteCategory(int id)
         {
             await _categoryRepository.DeleteById(id);
-            return Ok();
+            return Ok(AppConstants.Response<string>(AppConstants.successCode, AppConstants.deleteSuccessMessage));
         }
         #endregion
 

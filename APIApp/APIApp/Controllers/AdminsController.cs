@@ -1,5 +1,4 @@
-﻿
-namespace APIApp.Controllers
+﻿namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -30,16 +29,13 @@ namespace APIApp.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromForm] string email, [FromForm] string password)
         {
-            #region Check Parameters 
-            if (email == null || password == null) return BadRequest(AppConstants.GetBadRequest());
-            #endregion
 
             Admin? admin = await _authentication.Login(email, password);
 
             #region Check is Existed
 
             if (admin == null)
-                return BadRequest(AppConstants.GetBadRequest());
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
             #endregion
 
             #region Define Claims
@@ -81,12 +77,9 @@ namespace APIApp.Controllers
                 Permissions = permissionsDTO,
             };
 
-            object response = AppConstants.AdminLoginSuccessfully(adminLoginDTO, _jwt.GenentateToken(claims, numberOfDays: 1));
-
             #endregion
 
-
-            return Ok(response);
+            return Ok(AppConstants.LoginSuccessfully(adminLoginDTO, _jwt.GenentateToken(claims, numberOfDays: 1)));
         }
         #endregion
 
@@ -100,9 +93,12 @@ namespace APIApp.Controllers
         public async Task<ActionResult<IEnumerable<Admin>>> GetAll()
         {
             IEnumerable<Admin>? admins = await _adminRepository.GetAll();
-            if (admins.Count() == 0) return NotFound(AppConstants.GetEmptyList());
+            if (admins.Count() == 0)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            return Ok(admins);
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, admins));
+
         }
 
         //[HttpGet]
@@ -131,13 +127,16 @@ namespace APIApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Admin>> GetAdminById(int id)
         {
-            if (await _adminRepository.GetAll() == null) return NotFound(AppConstants.GetEmptyList());
+            if (await _adminRepository.GetAll() == null)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
             Admin? admin = await _adminRepository.GetById(id);
 
-            if (admin == null) return NotFound(AppConstants.GetNotFound());
+            if (admin == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
-            return admin;
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, admin));
+
         }
         #endregion
 
@@ -148,12 +147,16 @@ namespace APIApp.Controllers
         [HttpPost]
         public async Task<ActionResult<Admin>> Add(Admin admin)
         {
-            if (await _authentication.IsEmailTakenAsync(admin.Email)) return BadRequest(AppConstants.GetEmailFound());
-            if (await _adminRepository.GetAll() == null) return NotFound(AppConstants.GetNotFound());
+            if (await _authentication.IsEmailTakenAsync(admin.Email))
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.emailIsAlreadyMessage));
+
+            if (await _adminRepository.GetAll() == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
 
             await _adminRepository.Add(admin);
 
-            return CreatedAtAction("GetAll", new { id = admin.Id }, admin);
+            return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, admin));
         }
         #endregion
 
@@ -162,7 +165,8 @@ namespace APIApp.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Admin admin)
         {
-            if (id != admin.Id) return BadRequest(AppConstants.GetBadRequest());
+            if (id != admin.Id)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
             try
             {
@@ -170,10 +174,10 @@ namespace APIApp.Controllers
             }
             catch (DbUpdateConcurrencyException e)
             {
-                return Problem(statusCode: 500, title: e.Message);
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
             }
 
-            return Ok(AppConstants.UpdatedSuccessfully());
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, admin));
         }
 
         #endregion
@@ -185,11 +189,13 @@ namespace APIApp.Controllers
         {
             Admin? admin = await _adminRepository.GetById(id);
 
-            if (admin == null) return NotFound(AppConstants.GetNotFound());
+            if (admin == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
             try
             {
                 await _adminRepository.DeleteById(id);
-                return Ok(AppConstants.DeleteSuccessfully());
+                return Ok(AppConstants.Response<string>(AppConstants.successCode, AppConstants.deleteSuccessMessage));
             }
             catch (Exception e)
             {

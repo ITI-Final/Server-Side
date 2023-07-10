@@ -29,7 +29,11 @@ namespace APIApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Post>>> GetAll()
         {
-            return Ok(await _postsReposirory.GetAll());
+            IEnumerable<Post> posts = await _postsReposirory.GetAll();
+            if (posts.Count() < 1)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, posts));
         }
         #endregion
 
@@ -39,6 +43,10 @@ namespace APIApp.Controllers
         public async Task<ActionResult<Post>> getById(int id)
         {
             Post post = await _postsReposirory.GetById(id);
+
+            if (post == null)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
             #region serializer for fields value
             //[{ "fieldID": 3, "choices": [1, 2] }]
             List<FieldValuesDTO> fieldvalue = JsonSerializer.Deserialize<List<FieldValuesDTO>>(post.Fields)!;
@@ -121,8 +129,7 @@ namespace APIApp.Controllers
 
             #endregion
 
-            return Ok(postGetDTO);
-
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, postGetDTO));
         }
         #endregion
 
@@ -134,12 +141,13 @@ namespace APIApp.Controllers
         {
 
             if (postDTO == null)
-            {
-                return BadRequest();
-            }
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
             Post? post = _mapper.Map<Post>(postDTO);
             await _postsReposirory.Add(post);
-            return Ok();
+
+            return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, post));
+
         }
         #endregion
 
@@ -149,14 +157,19 @@ namespace APIApp.Controllers
         {
 
             if (id != postDto.Id)
-            {
-                return NotFound();
-            }
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
             Post? post = _mapper.Map<Post>(postDto);
+            try
+            {
+                await _postsReposirory.Update(id, post);
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
+            }
 
-            await _postsReposirory.Update(id, post);
-            return Ok(AppConstants.UpdatedSuccessfully());
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, post));
         }
         #endregion
 
@@ -164,9 +177,21 @@ namespace APIApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _postsReposirory.DeleteById(id);
-            return Ok(AppConstants.DeleteSuccessfully());
+            Post? post = await _postsReposirory.GetById(id);
+            if (post == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
+            try
+            {
+                await _postsReposirory.DeleteById(id);
+                return Ok(AppConstants.Response<string>(AppConstants.successCode, AppConstants.deleteSuccessMessage));
+
+            }
+            catch (Exception e)
+            {
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
+                //return Problem(statusCode: 500, title: e.Message);
+            }
         }
         #endregion
 

@@ -12,7 +12,7 @@ using OlxDataAccess.DBContext;
 namespace OlxDataAccess.Migrations
 {
     [DbContext(typeof(OLXContext))]
-    [Migration("20230709214730_m4")]
+    [Migration("20230709213906_m4")]
     partial class m4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
