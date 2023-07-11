@@ -1,4 +1,6 @@
-﻿namespace APIApp.Controllers
+﻿using APIApp.DTOs.Admin;
+
+namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -9,15 +11,17 @@
         readonly IConfiguration _configuration;
         readonly IAdminRepository _adminRepository;
         readonly IAuthentication<Admin> _authentication;
+        readonly IMapper _mapper;
         #endregion
 
         #region Constructors
-        public AdminsController(IJWT jWT, IConfiguration configuration, IAdminRepository adminRepository, IAuthentication<Admin> authentication)
+        public AdminsController(IJWT jWT, IConfiguration configuration, IAdminRepository adminRepository, IAuthentication<Admin> authentication, IMapper mapper)
         {
             _jwt = jWT;
             _configuration = configuration;
             _adminRepository = adminRepository;
             _authentication = authentication;
+            _mapper = mapper;
         }
         #endregion
 
@@ -145,9 +149,11 @@
         #region Add
         // POST: api/Admin
         [HttpPost]
-        public async Task<ActionResult<Admin>> Add(Admin admin)
+        public async Task<ActionResult<Admin>> Add(AdminDTO adminDto)
         {
-            if (await _authentication.IsEmailTakenAsync(admin.Email))
+
+            Admin admin = _mapper.Map<Admin>(adminDto);
+            if (await _authentication.IsEmailTakenAsync(adminDto.Email))
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.emailIsAlreadyMessage));
 
             if (await _adminRepository.GetAll() == null)
