@@ -1,4 +1,4 @@
-﻿namespace APIApp.DTOs
+﻿namespace APIApp.DTOs.Admin
 {
     public class AdminLoginDTO
     {

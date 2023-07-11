@@ -1,5 +1,5 @@
-﻿using APIApp.DTOs.FavouriteDTOs;
-using APIApp.DTOs.GovernorateDTOs;
+﻿using APIApp.DTOs.Admin;
+using APIApp.DTOs.FavouriteDTOs;
 using APIApp.DTOs.PostsDTOs;
 
 namespace APIApp.AutoMapper
@@ -23,6 +23,7 @@ namespace APIApp.AutoMapper
                     .ForMember(dest => dest.cities, opt => opt.MapFrom(src => src.Cities));
             CreateMap<City, CitiesDTO>();
             CreateMap<PostDTO, Post>();
+            CreateMap<AdminDTO, Admin>();
 
         }
     }

@@ -99,6 +99,40 @@ namespace APIApp.Controllers
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, AllGovernorates));
         }
+
+        [HttpGet("pages")]
+
+
+        public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAllPages(int page = 0, int pageSize = 10)
+        {
+            if (page < 1 || pageSize < 1)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
+            IEnumerable<Governorate> governorates = await _governorateRepository.GetAllWithPagination(page: page, pageSize: pageSize);
+
+            int totalCount = _governorateRepository.GetAllWithOutCities().Result.Count();
+
+
+            int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            if (totalPages < page)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
+            #region Formatte Response
+            var metadata = new
+            {
+                totalCount,
+                totalPages,
+                currentPage = page,
+                pageSize,
+            };
+            #endregion
+
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, new { governorates, metadata }));
+
+        }
+
         #region V4
         //[HttpGet]
         //public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAll()
