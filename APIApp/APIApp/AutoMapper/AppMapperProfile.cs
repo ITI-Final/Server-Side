@@ -24,6 +24,7 @@ namespace APIApp.AutoMapper
             CreateMap<City, CitiesDTO>();
             CreateMap<PostDTO, Post>();
             CreateMap<AdminDTO, Admin>();
+            CreateMap<PermissionDTO, Permission>();
 
         }
     }
