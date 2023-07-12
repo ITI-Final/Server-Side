@@ -16,6 +16,15 @@
             return await _dbContext.Governorates.Include(o => o.Cities).ToListAsync();
         }
 
+        public override async Task<IEnumerable<Governorate>> GetAllWithPagination(int page, int pageSize)
+        {
+            return await _dbContext.Governorates
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Include(g => g.Cities)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Governorate>> GetAllWithOutCities()
         {
             return await _dbContext.Governorates.ToListAsync();

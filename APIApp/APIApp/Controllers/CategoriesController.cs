@@ -21,11 +21,20 @@
         // GET: api/Categories
         #region get
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories(int? page = null, int? pageSize = null)
         {
-            IEnumerable<Category>? categories = await _categoryRepository.GetAll();
-            if (categories.Count() == 0)
+            if (page < 1 || pageSize < 1)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
+            int CategoriesCount = _categoryRepository.GetAll().Result.Count();
+            if (CategoriesCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
+            IEnumerable<Category> categories = await _categoryRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? CategoriesCount);
+
+            int totalPages = (int)Math.Ceiling((double)CategoriesCount / pageSize ?? CategoriesCount);
+            if (totalPages < page)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, categories));
         }

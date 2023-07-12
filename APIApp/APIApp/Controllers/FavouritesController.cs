@@ -22,16 +22,23 @@ namespace APIApp.Controllers
         }
         #endregion
 
+        #region Get
         // GET: api/Categories
-        #region get
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Favorite>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Favorite>>> GetAll(int? page = null, int? pageSize = null)
         {
-            IEnumerable<Favorite> favorites = await _favouriteRepositort.GetAll();
-            if (favorites.Count() < 1)
-                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+            if (page < 1 || pageSize < 1)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            //return Ok(await _favouriteRepositort.GetAll());
+            int favoritesCount = _favouriteRepositort.GetAll().Result.Count();
+            if (favoritesCount == 0)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+            IEnumerable<Favorite> favorites = await _favouriteRepositort.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? favoritesCount);
+
+            int totalPages = (int)Math.Ceiling((double)favoritesCount / pageSize ?? favoritesCount);
+            if (totalPages < page)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, favorites));
         }
 
@@ -66,7 +73,6 @@ namespace APIApp.Controllers
         #endregion
 
         #region Update
-
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, FavouriteDTO favouriteDTO)
         {
@@ -85,8 +91,7 @@ namespace APIApp.Controllers
         }
         #endregion
 
-        #region delete
-
+        #region Delete
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {

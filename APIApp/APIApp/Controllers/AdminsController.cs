@@ -94,15 +94,22 @@ namespace APIApp.Controllers
         #region Get All
         // GET: api/Admins
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Admin>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Admin>>> GetAll(int? page = null, int? pageSize = null)
         {
-            IEnumerable<Admin>? admins = await _adminRepository.GetAll();
-            if (admins.Count() == 0)
+            if (page < 1 || pageSize < 1)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
+            int adminsCount = _adminRepository.GetAll().Result.Count();
+            if (adminsCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
+            IEnumerable<Admin> admins = await _adminRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? adminsCount);
+
+            int totalPages = (int)Math.Ceiling((double)adminsCount / pageSize ?? adminsCount);
+            if (totalPages < page)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, admins));
-
         }
 
         //[HttpGet]
