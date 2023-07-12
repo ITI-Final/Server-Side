@@ -21,5 +21,7 @@
         public bool Is_Special { get; set; }
 
         public string Fields { get; set; }
+
+        // public List<imagesDTO> Post_Images { get; set; }
     }
 }

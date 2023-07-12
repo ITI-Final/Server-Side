@@ -1,4 +1,5 @@
 ﻿using APIApp.DTOs.PostsDTOs;
+using Microsoft.AspNetCore.Mvc;
 using OlxDataAccess.Posts.Repositories;
 using System.Text.Json;
 
@@ -140,8 +141,16 @@ namespace APIApp.Controllers
         public async Task<ActionResult> Add(PostDTO postDTO)
         {
 
+
             if (postDTO == null)
+            {
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+            }
+
+            //foreach (var fieldDTO in postDTO.Post_Images)
+            //{
+            //    fieldDTO.Image = await uploadImage(fieldDTO.ImageFile);
+            //}
 
             Post? post = _mapper.Map<Post>(postDTO);
             await _postsReposirory.Add(post);
@@ -149,6 +158,20 @@ namespace APIApp.Controllers
             return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, post));
 
         }
+        #region saveImage
+        [NonAction]
+        public async Task<String> uploadImage(IFormFile file)
+        {
+            var special = Guid.NewGuid().ToString();
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload\postImages", special + "-" + file.FileName);
+            using (FileStream ms = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(ms);
+            }
+            var filename = special + "-" + file.FileName;
+            return filePath;
+        }
+        #endregion
         #endregion
 
         #region Update

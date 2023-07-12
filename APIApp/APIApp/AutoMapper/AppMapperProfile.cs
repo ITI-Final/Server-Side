@@ -23,6 +23,7 @@ namespace APIApp.AutoMapper
                     .ForMember(dest => dest.cities, opt => opt.MapFrom(src => src.Cities));
             CreateMap<City, CitiesDTO>();
             CreateMap<PostDTO, Post>();
+            CreateMap<imagesDTO, Post_Image>();
             CreateMap<AdminDTO, Admin>();
             CreateMap<PermissionDTO, Permission>();
 

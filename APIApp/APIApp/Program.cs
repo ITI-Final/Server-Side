@@ -14,6 +14,7 @@ namespace APIApp
     using OlxDataAccess.Favourits.FavouritRepositories;
     using OlxDataAccess.Fields.Repositories;
     using OlxDataAccess.Governorates.Repositories;
+    using OlxDataAccess.imagesPost.Repositories;
     using OlxDataAccess.Models;
     using OlxDataAccess.Posts.Repositories;
     using OlxDataAccess.Users.Repositories;
@@ -108,6 +109,7 @@ namespace APIApp
             builder.Services.AddScoped<IGovernorateRepository, GovernorateRepository>();
             builder.Services.AddScoped<IPostRepository, PostRepository>();
             builder.Services.AddScoped<IFavouriteRepositort, FavouriteRepositort>();
+            builder.Services.AddScoped<IImagesPostRepository, ImagePostRepository>();
             #endregion
 
             #region AutoMapper
@@ -138,7 +140,7 @@ namespace APIApp
             app.UseAuthorization();
 
             app.MapControllers();
-
+            app.UseStaticFiles();
             #region Use Cors
             app.UseCors(policyName: "AllowAll");
             #endregion
