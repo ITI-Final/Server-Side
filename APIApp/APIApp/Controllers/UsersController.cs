@@ -84,12 +84,20 @@
 
         #region Get
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int? page = null, int? pageSize = null)
         {
-            IEnumerable<User>? users = await _userRepository.GetAll();
+            if (page < 1 || pageSize < 1)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            if (users.Count() == 0)
+            int usersCount = _userRepository.GetAll().Result.Count();
+            if (usersCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
+            IEnumerable<User> users = await _userRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? usersCount);
+
+            int totalPages = (int)Math.Ceiling((double)usersCount / pageSize ?? usersCount);
+            if (totalPages < page)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, users));
         }

@@ -25,112 +25,22 @@ namespace APIApp.Controllers
 
         #region GetAll
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAll()
-        {
-            List<GovernorateDTO> Governorates = new List<GovernorateDTO>();
-            List<CitiesDTO> CitiesDTO = new List<CitiesDTO>();
-
-            IEnumerable<Governorate> AllGovernorates = await _governorateRepository.GetAll();
-
-            foreach (Governorate governorate in AllGovernorates)
-            {
-
-                foreach (City city in governorate.Cities)
-                {
-                    CitiesDTO cityDTO = new CitiesDTO()
-                    {
-                        Id = city.Id,
-                        Governorate_Id = city.Governorate_Id,
-                        City_Name_Ar = city.City_Name_Ar,
-                        City_Name_En = city.City_Name_En,
-                    };
-                    CitiesDTO.Add(cityDTO);
-                }
-
-                GovernorateDTO governorateDTO = new GovernorateDTO()
-                {
-                    Id = governorate.Id,
-                    Governorate_Name_Ar = governorate.Governorate_Name_Ar,
-                    Governorate_Name_En = governorate.Governorate_Name_En,
-                    cities = CitiesDTO,
-                };
-                Governorates.Add(governorateDTO);
-            }
-
-            if (AllGovernorates.Count() == 0)
-                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
-
-            #region V2
-            //    var governorates = await _governorateRepository.GetAll()
-            //.Select(g => new GovernorateDTO
-            //{
-            //    Id = g.Id,
-            //    Governorate_Name_Ar = g.Governorate_Name_Ar,
-            //    Governorate_Name_En = g.Governorate_Name_En,
-            //    cities = g.Cities.Select(c => new CitiesDTO
-            //    {
-            //        Id = c.Id,
-            //        Governorate_Id = c.Governorate_Id,
-            //        City_Name_Ar = c.City_Name_Ar,
-            //        City_Name_En = c.City_Name_En
-            //    }).ToList()
-            //}).ToListAsync();
-
-            //    if (!governorates.Any())
-            //    {
-            //        return NotFound(AppConstants.GetEmptyList());
-            //    }
-            #endregion
-
-            #region V3
-
-            //  var governorates = _governorateRepository.GetAllGovernorates();
-
-
-            //  governorates.ProjectTo<GovernorateDTO>(_mapper.ConfigurationProvider)
-            //.ToListAsync();
-
-            //  if (!governorates.Any())
-            //  {
-            //      return NotFound(AppConstants.GetEmptyList());
-            //  }
-
-            #endregion
-
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, AllGovernorates));
-        }
-
-        [HttpGet("pages")]
-
-
-        public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAllPages(int page = 0, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAll(int? page, int? pageSize)
         {
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            IEnumerable<Governorate> governorates = await _governorateRepository.GetAllWithPagination(page: page, pageSize: pageSize);
+            int governoratesCount = _governorateRepository.GetAll().Result.Count();
+            if (governoratesCount == 0)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            int totalCount = _governorateRepository.GetAllWithOutCities().Result.Count();
+            IEnumerable<Governorate> governorates = await _governorateRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? governoratesCount);
 
-
-            int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
+            int totalPages = (int)Math.Ceiling((double)governoratesCount / pageSize ?? governoratesCount);
             if (totalPages < page)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            #region Formatte Response
-            var metadata = new
-            {
-                totalCount,
-                totalPages,
-                currentPage = page,
-                pageSize,
-            };
-            #endregion
-
-
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, new { governorates, metadata }));
-
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, governorates));
         }
 
         #region V4

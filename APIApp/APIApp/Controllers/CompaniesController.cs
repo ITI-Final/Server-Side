@@ -28,13 +28,22 @@
 
         #region Get All
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Company>>> GetAllCompanies()
+        public async Task<ActionResult<IEnumerable<Company>>> GetAllCompanies(int? page = null, int? pageSize = null)
         {
-            IEnumerable<Company>? companies = await _companyRepository.GetAll();
-            if (companies.Count() == 0)
+            if (page < 1 || pageSize < 1)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
+            int companiesCount = _companyRepository.GetAll().Result.Count();
+            if (companiesCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, companies));
+            IEnumerable<Company> company = await _companyRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? companiesCount);
+
+            int totalPages = (int)Math.Ceiling((double)companiesCount / pageSize ?? companiesCount);
+            if (totalPages < page)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, company));
         }
         #endregion
 

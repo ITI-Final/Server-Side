@@ -1,5 +1,4 @@
 ﻿using APIApp.DTOs.PostsDTOs;
-using Microsoft.AspNetCore.Mvc;
 using OlxDataAccess.Posts.Repositories;
 using System.Text.Json;
 
@@ -28,11 +27,19 @@ namespace APIApp.Controllers
 
         #region Get All
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page = null, int? pageSize = null)
         {
-            IEnumerable<Post> posts = await _postsReposirory.GetAll();
-            if (posts.Count() < 1)
+            if (page < 1 || pageSize < 1)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
+            int postsCount = _postsReposirory.GetAll().Result.Count();
+            if (postsCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+            IEnumerable<Post> posts = await _postsReposirory.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? postsCount);
+
+            int totalPages = (int)Math.Ceiling((double)postsCount / pageSize ?? postsCount);
+            if (totalPages < page)
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, posts));
         }

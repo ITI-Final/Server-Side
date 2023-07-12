@@ -25,8 +25,6 @@
 
         public virtual async Task<IEnumerable<T>> GetAllWithPagination(int page, int pageSize)
         {
-            //var totalCount = _dbSet.Count();
-            //var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
             var skip = (page - 1) * pageSize;
             return await _dbSet.Skip(skip).Take(pageSize * 1).ToListAsync();
         }
