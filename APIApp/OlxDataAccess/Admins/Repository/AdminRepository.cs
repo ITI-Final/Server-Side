@@ -36,12 +36,12 @@
             return await _context.Admins.FirstOrDefaultAsync(q => q.Id == id);
         }
 
-        public async Task<Admin> Login(string email, string password)
+        public async Task<Admin> Login(string email)
         {
             return await _context
                 .Admins
                 .Include(a => a.Permissions)
-                .FirstOrDefaultAsync(a => a.Email == email && a.Password == password);
+                .FirstOrDefaultAsync(a => a.Email == email);
         }
 
         public async Task<bool> IsEmailTakenAsync(string email)

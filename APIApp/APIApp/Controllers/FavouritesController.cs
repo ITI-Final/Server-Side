@@ -39,7 +39,7 @@ namespace APIApp.Controllers
             if (totalPages < page)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, favorites));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, favoritesCount, favorites));
         }
 
         [HttpGet("{id}")]
@@ -48,7 +48,7 @@ namespace APIApp.Controllers
             Favorite favourite = await _favouriteRepositort.GetById(id);
 
             //return Ok(favourite);
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, favourite));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, favourite));
 
         }
         #endregion
@@ -67,7 +67,7 @@ namespace APIApp.Controllers
             await _favouriteRepositort.Add(favorite);
 
             // return CreatedAtAction("GetAll", new { id = favouriteDTO.Id }, favouriteDTO);
-            return Created("GetCategories", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, favouriteDTO));
+            return Created("GetCategories", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, favouriteDTO));
         }
 
         #endregion
@@ -86,7 +86,7 @@ namespace APIApp.Controllers
             await _favouriteRepositort.Update(id, favorite);
 
             //return NoContent();
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, favorite));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, 1, 1, 1, favorite));
 
         }
         #endregion

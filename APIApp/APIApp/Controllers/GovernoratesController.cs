@@ -25,8 +25,9 @@ namespace APIApp.Controllers
 
         #region GetAll
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAll(int? page, int? pageSize)
+        public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAll(int? page)
         {
+            int? pageSize = 10;
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
@@ -40,7 +41,7 @@ namespace APIApp.Controllers
             if (totalPages < page)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, governorates));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, governoratesCount, governorates));
         }
 
         #region V4
@@ -70,7 +71,7 @@ namespace APIApp.Controllers
             if (governorate == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, governorate));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, governorate));
         }
         #endregion
 
@@ -83,7 +84,7 @@ namespace APIApp.Controllers
             Governorate? governorate = _mapper.Map<Governorate>(governorateDTO);
             await _governorateRepository.Add(governorate);
 
-            return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, governorate));
+            return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, governorate));
         }
         #endregion
 
@@ -104,7 +105,7 @@ namespace APIApp.Controllers
                 return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
             }
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, governorate));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, 1, 1, 1, governorate));
         }
         #endregion
 

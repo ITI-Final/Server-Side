@@ -16,11 +16,11 @@
             return await _dbSet.Where(u => u.Email == email).FirstOrDefaultAsync();
         }
 
-        public async Task<User> Login(string email, string password)
+        public async Task<User> Login(string email)
         {
             return await _context
                 .Users
-                .FirstOrDefaultAsync(a => a.Email == email && a.Password == password);
+                .FirstOrDefaultAsync(a => a.Email == email);
         }
 
         public async Task<bool> IsEmailTakenAsync(string email)

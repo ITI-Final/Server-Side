@@ -41,14 +41,14 @@ namespace APIApp.Controllers
             if (totalPages < page)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, posts));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, postsCount, posts));
         }
         #endregion
 
         #region Get By Id
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Post>> getById(int id)
+        public async Task<ActionResult<Post>> GetById(int id)
         {
             Post post = await _postsReposirory.GetById(id);
 
@@ -137,7 +137,7 @@ namespace APIApp.Controllers
 
             #endregion
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, postGetDTO));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, postGetDTO));
         }
         #endregion
 
@@ -162,7 +162,7 @@ namespace APIApp.Controllers
             Post? post = _mapper.Map<Post>(postDTO);
             await _postsReposirory.Add(post);
 
-            return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, post));
+            return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, post));
 
         }
         #region saveImage
@@ -199,7 +199,7 @@ namespace APIApp.Controllers
                 return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
             }
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, post));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, 1, 1, 1, post));
         }
         #endregion
 

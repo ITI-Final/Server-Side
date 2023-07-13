@@ -36,7 +36,7 @@
             if (totalPages < page)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, categories));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, CategoriesCount, categories));
         }
 
         [HttpGet("{id}")]
@@ -50,7 +50,7 @@
             if (category == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, category));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, category));
         }
 
 
@@ -75,7 +75,7 @@
                 getCategortNameDTOs.Add(names);
             }
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, getCategortNameDTOs));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, getCategortNameDTOs));
         }
         #endregion
 
@@ -147,7 +147,7 @@
             #endregion
             await _categoryRepository.Add(categories);
             //return Created("", categories);
-            return Created("GetCategories", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, categories));
+            return Created("GetCategories", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, categories));
         }
 
         [HttpPost]
@@ -158,7 +158,7 @@
             await _categoryRepository.Add(Main);
 
             //return NoContent();
-            return Created("GetCategories", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, Main));
+            return Created("GetCategories", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, Main));
         }
         #endregion
 
@@ -176,7 +176,7 @@
             Category? category1 = _mapper.Map<Category>(category);
             await _categoryRepository.Update(id, category1);
             //return NoContent();
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, category1));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, 1, 1, 1, category1));
         }
         #endregion
 

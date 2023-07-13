@@ -36,11 +36,16 @@
         public async Task<IActionResult> Login([FromForm] UserLoginDTO userLoginDTO)
         {
 
-            User? user = await _userRepository.Login(userLoginDTO.Email, userLoginDTO.Password);
+            User? user = await _userRepository.Login(userLoginDTO.Email);
 
             #region Check is Existed
             if (user == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+            #endregion
+
+            #region Check Hashing
+            if (!BCrypt.Net.BCrypt.Verify(userLoginDTO.Password, user.Password))
+                return Unauthorized(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.passwordIsInvalid));
             #endregion
 
             #region Define Claims
@@ -67,10 +72,16 @@
         {
             try
             {
-                User? user = _mapper.Map<User>(userRegister);
+                #region Hashing
+                string? passwordHash = BCrypt.Net.BCrypt.HashPassword(userRegister.Password);
+                userRegister.Password = passwordHash;
+                #endregion
+
+                User user = _mapper.Map<User>(userRegister);
+
                 await _userRepository.Add(user);
 
-                return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, user));
+                return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, user));
             }
             catch (Exception ex)
             {
@@ -99,7 +110,8 @@
             if (totalPages < page)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, users));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, usersCount, users));
+
         }
 
         [HttpGet("id")]
@@ -113,7 +125,7 @@
             if (user == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, user));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, user));
         }
         #endregion
 
@@ -129,7 +141,7 @@
                 User? user = _mapper.Map<User>(userDto);
                 await _userRepository.Add(user);
 
-                return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, user));
+                return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, user));
             }
             catch (Exception ex)
             {
@@ -151,7 +163,7 @@
                 User? user = _mapper.Map<User>(userDto);
                 await _userRepository.Update(id, user);
 
-                return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, user));
+                return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, 1, 1, 1, user));
             }
             catch (Exception ex)
             {

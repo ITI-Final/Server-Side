@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OlxDataAccess.DBContext;
 
@@ -11,9 +12,10 @@ using OlxDataAccess.DBContext;
 namespace OlxDataAccess.Migrations
 {
     [DbContext(typeof(OLXContext))]
-    partial class OLXContextModelSnapshot : ModelSnapshot
+    [Migration("20230713004142_gemmy1UpdatePasswordStringSize")]
+    partial class gemmy1UpdatePasswordStringSize
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

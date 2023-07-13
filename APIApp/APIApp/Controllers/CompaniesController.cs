@@ -37,13 +37,13 @@
             if (companiesCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            IEnumerable<Company> company = await _companyRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? companiesCount);
+            IEnumerable<Company> companies = await _companyRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? companiesCount);
 
             int totalPages = (int)Math.Ceiling((double)companiesCount / pageSize ?? companiesCount);
             if (totalPages < page)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, company));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, companiesCount, companies));
         }
         #endregion
 
@@ -59,7 +59,7 @@
             if (company == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, company));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, company));
         }
         #endregion
 
@@ -96,7 +96,7 @@
 
             await _companyRepository.Update(id, company);
             //return Ok(AppConstants.UpdatedSuccessfully());
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, company));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, 1, 1, 1, company));
         }
         #endregion
 

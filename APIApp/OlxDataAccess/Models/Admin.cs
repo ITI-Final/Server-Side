@@ -21,7 +21,7 @@ namespace OlxDataAccess.Models
         [StringLength(100)]
         public string Email { get; set; }
         [Required]
-        [StringLength(50)]
+        [StringLength(200)]
         public string Password { get; set; }
         public string Avatar { get; set; }
         public string Address { get; set; }
