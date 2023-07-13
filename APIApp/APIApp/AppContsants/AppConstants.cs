@@ -8,6 +8,10 @@ namespace APIApp.AppContsants
     {
         public int StatusCode { get; set; }
         public string StatusMessage { get; set; }
+        public int? Page { get; set; }
+        public int? NumberOfPages { get; set; }
+        public int? TotalCount { get; set; }
+
         public T Data { get; set; }
     }
 
@@ -33,17 +37,21 @@ namespace APIApp.AppContsants
         public const string notContentMessage = "No Content.";
         public const string invalidMessage = "The request was invalid or malformed.";
         public const string errorMessage = "Error 500.";
+        public const string passwordIsInvalid = "Password Is Invalid";
         #endregion
 
         #region Methods
 
         #region Response
-        public static Response<object> Response<T>(int statusCode, string statusMessage, T data = default)
+        public static Response<object> Response<T>(int statusCode, string statusMessage, int? page = 1, int? numberOfPages = 1, int? totalCount = 0, T data = default)
         {
             return new Response<object>
             {
                 StatusCode = statusCode,
                 StatusMessage = statusMessage,
+                Page = page ?? 1,
+                NumberOfPages = numberOfPages ?? 1,
+                TotalCount = totalCount ?? 0,
                 Data = data
             };
         }

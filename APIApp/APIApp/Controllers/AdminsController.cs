@@ -34,12 +34,16 @@ namespace APIApp.Controllers
         public async Task<ActionResult> Login([FromForm] string email, [FromForm] string password)
         {
 
-            Admin? admin = await _authentication.Login(email, password);
+            Admin? admin = await _authentication.Login(email);
 
             #region Check is Existed
-
             if (admin == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+            #endregion
+
+            #region Check Hashing
+            if (!BCrypt.Net.BCrypt.Verify(password, admin.Password))
+                return Unauthorized(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.passwordIsInvalid));
             #endregion
 
             #region Define Claims
@@ -86,7 +90,6 @@ namespace APIApp.Controllers
             return Ok(AppConstants.LoginSuccessfully(adminLoginDTO, _jwt.GenentateToken(claims, numberOfDays: 1)));
         }
         #endregion
-
         #endregion
 
         #region Get
@@ -109,7 +112,7 @@ namespace APIApp.Controllers
             if (totalPages < page)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, admins));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, adminsCount, admins));
         }
 
         //[HttpGet]
@@ -146,7 +149,7 @@ namespace APIApp.Controllers
             if (admin == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, admin));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, admin));
 
         }
         #endregion
@@ -159,17 +162,22 @@ namespace APIApp.Controllers
         public async Task<ActionResult<Admin>> Add(AdminDTO adminDto)
         {
 
-            Admin admin = _mapper.Map<Admin>(adminDto);
             if (await _authentication.IsEmailTakenAsync(adminDto.Email))
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.emailIsAlreadyMessage));
 
             if (await _adminRepository.GetAll() == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
+            #region Hashing
+            string? passwordHash = BCrypt.Net.BCrypt.HashPassword(adminDto.Password);
+            adminDto.Password = passwordHash;
+            #endregion
+
+            Admin admin = _mapper.Map<Admin>(adminDto);
 
             await _adminRepository.Add(admin);
 
-            return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, admin));
+            return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, admin));
         }
         #endregion
 
@@ -190,7 +198,7 @@ namespace APIApp.Controllers
                 return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
             }
 
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, admin));
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, 1, 1, 1, admin));
         }
 
         #endregion
