@@ -18,13 +18,28 @@ namespace APIApp.Controllers
             _mapper = mapper;
         }
         [HttpPost]
-        public async Task<ActionResult> addimage([FromForm] imagesDTO imagesDTO)
+        public async Task<ActionResult> addimage([FromForm] List<imagesDTO> imagesDTO)
         {
-            imagesDTO.Image = uploadImage(imagesDTO.ImageFile);
-            var image = _mapper.Map<Post_Image>(imagesDTO);
-            await _imagesPostRepository.Add(image);
+            foreach (var item in imagesDTO)
+            {
+                item.Image = uploadImage(item.ImageFile);
+
+            }
+            // imagesDTO.Image = uploadImage(imagesDTO.ImageFile);
+            var image = _mapper.Map<List<Post_Image>>(imagesDTO);
+            await _imagesPostRepository.addmultImage(image);
             return Ok(image);
         }
+
+        #region AddSigleImage
+        [HttpPost("SingleImage")]
+        public async Task<ActionResult> addSingleImage([FromForm] imagesDTO imagesDTO)
+        {
+            var image = _mapper.Map<List<Post_Image>>(imagesDTO);
+            await _imagesPostRepository.addmultImage(image);
+            return Ok(image);
+        }
+        #endregion
         #region saveImage
         [NonAction]
         public string uploadImage(IFormFile file)

@@ -13,6 +13,14 @@ namespace OlxDataAccess.imagesPost.Repositories
         {
             _dbContext = context;
         }
+        public async Task addmultImage(List<Post_Image> p)
+        {
+            foreach (var item in p)
+            {
+                _dbContext.Post_Images.Add(item);
+            }
+            await _dbContext.SaveChangesAsync();
+        }
 
     }
 }
