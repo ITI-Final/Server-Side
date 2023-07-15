@@ -1,7 +1,9 @@
 ﻿using APIApp.DTOs.PostsDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using OlxDataAccess.imagesPost.Repositories;
+using OlxDataAccess.Models;
 
 namespace APIApp.Controllers
 {
@@ -17,12 +19,29 @@ namespace APIApp.Controllers
             _imagesPostRepository = imagesPostRepository;
             _mapper = mapper;
         }
+
+        #region get
+        [HttpGet("{id}")]
+        public async Task<ActionResult<List<Post_Image>>> getBYPostId(int id)
+        {
+            List<Post_Image> p = await _imagesPostRepository.getByPostId(id);
+            if (p.Count() == 0)
+            {
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+            }
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, data: p));
+        }
+        #endregion
+
+        #region add
+
+
         [HttpPost]
         public async Task<ActionResult> addimage([FromForm] List<imagesDTO> imagesDTO)
         {
             foreach (var item in imagesDTO)
             {
-                item.Image = uploadImage(item.ImageFile);
+                item.Image = await uploadImage(item.ImageFile);
 
             }
             // imagesDTO.Image = uploadImage(imagesDTO.ImageFile);
@@ -40,9 +59,11 @@ namespace APIApp.Controllers
             return Ok(image);
         }
         #endregion
+        #endregion
+
         #region saveImage
         [NonAction]
-        public string uploadImage(IFormFile file)
+        public async Task<string> uploadImage(IFormFile file)
         {
             var special = Guid.NewGuid().ToString();
             string hosturl = "https://localhost:7094/";

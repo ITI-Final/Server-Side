@@ -116,6 +116,17 @@ namespace APIApp.Controllers
             #endregion
 
             #region return post with with it's chocien value
+            List<GetImagesPostDTO> i = new List<GetImagesPostDTO>();
+            foreach (var item in post.Post_Images)
+            {
+                GetImagesPostDTO getImagesPostDTO = new GetImagesPostDTO()
+                {
+                    Id = item.Id,
+                    Image = item.Image,
+                    Post_Id = item.Post_Id,
+                };
+                i.Add(getImagesPostDTO);
+            }
             PostGetDTO postGetDTO = new PostGetDTO()
             {
                 Cat_Id = post.Cat_Id,
@@ -125,6 +136,7 @@ namespace APIApp.Controllers
                 Created_Date = post.Created_Date,
                 Description = post.Description,
                 Fields = f,
+                Post_Image = i,
                 Is_Special = post.Is_Special,
                 Is_Visible = post.Is_Visible,
                 Post_Location = post.Post_Location,
@@ -145,7 +157,7 @@ namespace APIApp.Controllers
 
         #region Add
         [HttpPost]
-        public async Task<ActionResult> Add(PostDTO postDTO)
+        public async Task<ActionResult> Add([FromForm] PostDTO postDTO)
         {
 
 
@@ -154,10 +166,10 @@ namespace APIApp.Controllers
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
             }
 
-            //foreach (var fieldDTO in postDTO.Post_Images)
-            //{
-            //    fieldDTO.Image = await uploadImage(fieldDTO.ImageFile);
-            //}
+            foreach (var fieldDTO in postDTO.Post_Images)
+            {
+                fieldDTO.Image = await uploadImage(fieldDTO.ImageFile);
+            }
 
             Post? post = _mapper.Map<Post>(postDTO);
             await _postsReposirory.Add(post);
@@ -166,17 +178,20 @@ namespace APIApp.Controllers
 
         }
         #region saveImage
+
         [NonAction]
-        public async Task<String> uploadImage(IFormFile file)
+        public async Task<string> uploadImage(IFormFile file)
         {
             var special = Guid.NewGuid().ToString();
+            string hosturl = "https://localhost:7094/";
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload\postImages", special + "-" + file.FileName);
             using (FileStream ms = new FileStream(filePath, FileMode.Create))
             {
-                await file.CopyToAsync(ms);
+                file.CopyToAsync(ms);
             }
             var filename = special + "-" + file.FileName;
-            return filePath;
+            //  return $"{filename}";
+            return Path.Combine(hosturl, @"upload\postImages", filename).ToString();
         }
         #endregion
         #endregion
