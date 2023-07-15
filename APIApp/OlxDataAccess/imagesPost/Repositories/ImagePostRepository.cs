@@ -24,6 +24,10 @@ namespace OlxDataAccess.imagesPost.Repositories
             }
             await _dbContext.SaveChangesAsync();
         }
+        public async Task<List<Post_Image>> getByPostId(int id)
+        {
+            return await _dbContext.Post_Images.Where(o => o.Post_Id == id).ToListAsync();
+        }
 
     }
 }

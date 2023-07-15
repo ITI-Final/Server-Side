@@ -19,7 +19,7 @@
         public bool? Is_Visible { get; set; }
         public int Views { get; set; }
         public bool Is_Special { get; set; }
-
+        public List<GetImagesPostDTO> Post_Image { get; set; }
         public List<returnFieldDTO>? Fields { get; set; }
     }
 }
