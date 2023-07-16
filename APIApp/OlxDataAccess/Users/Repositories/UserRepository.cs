@@ -9,7 +9,7 @@
 
         public override async Task<User> GetById(int id)
         {
-            return await _dbSet.Include(c => c.Company).Include(f => f.Favorites).FirstOrDefaultAsync(u => u.Id == id);
+            return await _dbSet.Include(c => c.Companies).Include(f => f.Favorites).FirstOrDefaultAsync(u => u.Id == id);
         }
         public async Task<User> GetUserByEmail(string email)
         {
