@@ -32,8 +32,4 @@
     <ProjectReference Include="..\OlxDataAccess\OlxDataAccess.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\upload\postImages\" />
-  </ItemGroup>
-
 </Project>
