@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,8 @@ namespace OlxDataAccess.imagesPost.Repositories
     public class ImagePostRepository : BaseRepository<Post_Image>, IImagesPostRepository
     {
         private OLXContext _dbContext;
+        // private IWebHostEnvironment environment;
+
         public ImagePostRepository(OLXContext context) : base(context)
         {
             _dbContext = context;
@@ -27,6 +30,38 @@ namespace OlxDataAccess.imagesPost.Repositories
         public async Task<List<Post_Image>> getByPostId(int id)
         {
             return await _dbContext.Post_Images.Where(o => o.Post_Id == id).ToListAsync();
+        }
+
+        public async Task<string> uploadImage(IFormFile file)
+        {
+            var special = Guid.NewGuid().ToString();
+            string hosturl = "https://localhost:7094/";
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload\postImages", special + "-" + file.FileName);
+            using (FileStream ms = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyToAsync(ms);
+            }
+            var filename = special + "-" + file.FileName;
+            //  return $"{filename}";
+            return Path.Combine(@"upload\postImages", filename).ToString();
+        }
+        public bool DeleteImage(string imageFileName)
+        {
+            try
+            {
+
+                var path = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", imageFileName);
+                if (System.IO.File.Exists(path))
+                {
+                    System.IO.File.Delete(path);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
     }

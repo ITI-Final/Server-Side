@@ -41,7 +41,7 @@ namespace APIApp.Controllers
         {
             foreach (var item in imagesDTO)
             {
-                item.Image = await uploadImage(item.ImageFile);
+                item.Image = await _imagesPostRepository.uploadImage(item.ImageFile);
 
             }
             // imagesDTO.Image = uploadImage(imagesDTO.ImageFile);
@@ -54,28 +54,29 @@ namespace APIApp.Controllers
         [HttpPost("SingleImage")]
         public async Task<ActionResult> addSingleImage([FromForm] imagesDTO imagesDTO)
         {
-            var image = _mapper.Map<List<Post_Image>>(imagesDTO);
-            await _imagesPostRepository.addmultImage(image);
+            imagesDTO.Image = await _imagesPostRepository.uploadImage(imagesDTO.ImageFile);
+            var image = _mapper.Map<Post_Image>(imagesDTO);
+            await _imagesPostRepository.Add(image);
             return Ok(image);
         }
         #endregion
         #endregion
 
         #region saveImage
-        [NonAction]
-        public async Task<string> uploadImage(IFormFile file)
-        {
-            var special = Guid.NewGuid().ToString();
-            string hosturl = "https://localhost:7094/";
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload\postImages", special + "-" + file.FileName);
-            using (FileStream ms = new FileStream(filePath, FileMode.Create))
-            {
-                file.CopyToAsync(ms);
-            }
-            var filename = special + "-" + file.FileName;
-            //  return $"{filename}";
-            return Path.Combine(hosturl, @"upload\postImages", filename).ToString();
-        }
+        //[NonAction]
+        //public async Task<string> uploadImage(IFormFile file)
+        //{
+        //    var special = Guid.NewGuid().ToString();
+        //    string hosturl = "https://localhost:7094/";
+        //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload\postImages", special + "-" + file.FileName);
+        //    using (FileStream ms = new FileStream(filePath, FileMode.Create))
+        //    {
+        //        file.CopyToAsync(ms);
+        //    }
+        //    var filename = special + "-" + file.FileName;
+        //    //  return $"{filename}";
+        //    return Path.Combine(hosturl, @"upload\postImages", filename).ToString();
+        //}
         #endregion
 
     }

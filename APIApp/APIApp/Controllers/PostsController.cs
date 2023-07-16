@@ -1,4 +1,5 @@
 ﻿using APIApp.DTOs.PostsDTOs;
+using OlxDataAccess.imagesPost.Repositories;
 using OlxDataAccess.Posts.Repositories;
 using System.Text.Json;
 
@@ -11,12 +12,14 @@ namespace APIApp.Controllers
         #region Fileds
         protected readonly IPostRepository _postsReposirory;
         private readonly IMapper _mapper;
+        private readonly IImagesPostRepository _imagesPostRepository;
         #endregion
 
         #region Constructors
-        public PostsController(IPostRepository postsReposirory, IMapper mapper)
+        public PostsController(IPostRepository postsReposirory, IMapper mapper, IImagesPostRepository imagesPostRepository)
         {
             _postsReposirory = postsReposirory;
+            _imagesPostRepository = imagesPostRepository;
             _mapper = mapper;
         }
         #endregion
@@ -168,7 +171,7 @@ namespace APIApp.Controllers
 
             foreach (var fieldDTO in postDTO.Post_Images)
             {
-                fieldDTO.Image = await uploadImage(fieldDTO.ImageFile);
+                fieldDTO.Image = await _imagesPostRepository.uploadImage(fieldDTO.ImageFile);
             }
 
             Post? post = _mapper.Map<Post>(postDTO);
@@ -179,20 +182,20 @@ namespace APIApp.Controllers
         }
         #region saveImage
 
-        [NonAction]
-        public async Task<string> uploadImage(IFormFile file)
-        {
-            var special = Guid.NewGuid().ToString();
-            string hosturl = "https://localhost:7094/";
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload\postImages", special + "-" + file.FileName);
-            using (FileStream ms = new FileStream(filePath, FileMode.Create))
-            {
-                file.CopyToAsync(ms);
-            }
-            var filename = special + "-" + file.FileName;
-            //  return $"{filename}";
-            return Path.Combine(hosturl, @"upload\postImages", filename).ToString();
-        }
+        //[NonAction]
+        //public async Task<string> uploadImage(IFormFile file)
+        //{
+        //    var special = Guid.NewGuid().ToString();
+        //    string hosturl = "https://localhost:7094/";
+        //    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload\postImages", special + "-" + file.FileName);
+        //    using (FileStream ms = new FileStream(filePath, FileMode.Create))
+        //    {
+        //        file.CopyToAsync(ms);
+        //    }
+        //    var filename = special + "-" + file.FileName;
+        //    //  return $"{filename}";
+        //    return Path.Combine(hosturl, @"upload\postImages", filename).ToString();
+        //}
         #endregion
         #endregion
 
@@ -223,6 +226,13 @@ namespace APIApp.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             Post? post = await _postsReposirory.GetById(id);
+
+            ICollection<Post_Image> p = post.Post_Images;
+            foreach (var item in p)
+            {
+                _imagesPostRepository.DeleteImage(item.Image);
+            }
+
             if (post == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
