@@ -1,9 +1,5 @@
 ﻿namespace APIApp.Controllers
 {
-    using APIApp.DTOs.UserDTOs;
-    using APIApp.Services.Authentication;
-    using OlxDataAccess.Models;
-
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -95,8 +91,9 @@
 
         #region Get
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int? page = null, int? pageSize = null)
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int? page)
         {
+            int? pageSize = 10;
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 

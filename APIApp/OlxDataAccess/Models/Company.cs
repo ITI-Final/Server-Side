@@ -4,6 +4,7 @@
 namespace OlxDataAccess.Models
 {
     [Table("Company")]
+    [Index("OwnerID", Name = "IX_Company_OwnerID")]
     public partial class Company
     {
         [Key]
@@ -12,12 +13,12 @@ namespace OlxDataAccess.Models
         public string Cover_Url { get; set; }
         [StringLength(50)]
         public string Tax_Number { get; set; }
-        //userid
-        public int OwnerID { get; set; }
+        public int? Owner { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? Register_Date { get; set; }
+        public int OwnerID { get; set; }
 
-        [ForeignKey("Owner")]
+        [ForeignKey("OwnerID")]
         [InverseProperty("Companies")]
         public virtual User OwnerNavigation { get; set; }
     }

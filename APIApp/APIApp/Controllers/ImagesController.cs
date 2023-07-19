@@ -1,11 +1,4 @@
-﻿using APIApp.DTOs.PostsDTOs;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using OlxDataAccess.imagesPost.Repositories;
-using OlxDataAccess.Models;
-
-namespace APIApp.Controllers
+﻿namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

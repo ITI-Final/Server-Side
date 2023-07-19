@@ -9,12 +9,12 @@ namespace OlxDataAccess.Models
     {
         public User()
         {
-            ChatUser_OneNavigations = new HashSet<Chat>();
-            ChatUser_TwoNavigations = new HashSet<Chat>();
-            Chat_Messages = new HashSet<Chat_Message>();
+            ChatReceivers = new HashSet<Chat>();
+            ChatSenders = new HashSet<Chat>();
             Companies = new HashSet<Company>();
             Favorites = new HashSet<Favorite>();
             Posts = new HashSet<Post>();
+            User_Connections = new HashSet<User_Connection>();
         }
 
         [Key]
@@ -39,17 +39,17 @@ namespace OlxDataAccess.Models
         [Column(TypeName = "datetime")]
         public DateTime? Register_Date { get; set; }
 
-        [InverseProperty("User_OneNavigation")]
-        public virtual ICollection<Chat> ChatUser_OneNavigations { get; set; }
-        [InverseProperty("User_TwoNavigation")]
-        public virtual ICollection<Chat> ChatUser_TwoNavigations { get; set; }
+        [InverseProperty("Receiver")]
+        public virtual ICollection<Chat> ChatReceivers { get; set; }
         [InverseProperty("Sender")]
-        public virtual ICollection<Chat_Message> Chat_Messages { get; set; }
+        public virtual ICollection<Chat> ChatSenders { get; set; }
         [InverseProperty("OwnerNavigation")]
         public virtual ICollection<Company> Companies { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<Favorite> Favorites { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<Post> Posts { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<User_Connection> User_Connections { get; set; }
     }
 }

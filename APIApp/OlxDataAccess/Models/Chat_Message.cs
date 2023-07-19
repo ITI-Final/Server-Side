@@ -4,22 +4,20 @@
 namespace OlxDataAccess.Models
 {
     [Table("Chat_Message")]
+    [Index("Chat_Id", Name = "IX_Chat_Message_Chat_Id")]
     public partial class Chat_Message
     {
         [Key]
         public int Id { get; set; }
         public int Chat_Id { get; set; }
-        public int Sender_Id { get; set; }
+        [Required]
         public string Message { get; set; }
-        public string Image { get; set; }
-        [Column(TypeName = "datetime")]
-        public DateTime? Send_Date { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime Date { get; set; }
+        public TimeSpan Time { get; set; }
 
         [ForeignKey("Chat_Id")]
         [InverseProperty("Chat_Messages")]
         public virtual Chat Chat { get; set; }
-        [ForeignKey("Sender_Id")]
-        [InverseProperty("Chat_Messages")]
-        public virtual User Sender { get; set; }
     }
 }

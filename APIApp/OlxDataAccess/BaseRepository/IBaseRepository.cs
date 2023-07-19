@@ -1,4 +1,4 @@
-﻿namespace OlxDataAccess
+﻿namespace OlxDataAccess.BaseRepository
 {
     public interface IBaseRepository<T> where T : class
     {

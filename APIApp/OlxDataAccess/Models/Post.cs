@@ -4,6 +4,9 @@
 namespace OlxDataAccess.Models
 {
     [Table("Post")]
+    [Index("Cat_Id", Name = "IX_Post_Cat_Id")]
+    [Index("Post_Location", Name = "IX_Post_Post_Location")]
+    [Index("User_Id", Name = "IX_Post_User_Id")]
     public partial class Post
     {
         public Post()
