@@ -22,6 +22,6 @@
 
         public string Fields { get; set; }
 
-        // public List<imagesDTO> Post_Images { get; set; }
+        public List<imagesDTO> Post_Images { get; set; }
     }
 }
