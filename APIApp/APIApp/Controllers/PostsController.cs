@@ -59,7 +59,7 @@ namespace APIApp.Controllers
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
             #region serializer for fields value
-            //[{ "fieldID": 3, "choices": [1, 2] }]
+            //[{ "fieldID": 3, "Choices": [1, 2] }]
             List<FieldValuesDTO> fieldvalue = JsonSerializer.Deserialize<List<FieldValuesDTO>>(post.Fields)!;
             #endregion
 
@@ -110,7 +110,7 @@ namespace APIApp.Controllers
                     Field_Name = item.Name,
                     Field_Label = item.Label,
                     Field_Label_Ar = item.Label_Ar,
-                    choices = c,
+                    Choices = c,
 
                 };
                 f.Add(returnFieldDTO);

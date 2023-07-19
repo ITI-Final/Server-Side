@@ -1,6 +1,5 @@
 ﻿namespace OlxDataAccess.Categories.Repositories
 {
-   
 
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
