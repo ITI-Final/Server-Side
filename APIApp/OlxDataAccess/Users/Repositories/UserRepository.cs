@@ -9,8 +9,20 @@
 
         public override async Task<User> GetById(int id)
         {
-            return await _dbSet.Include(c => c.Companies).Include(f => f.Favorites).FirstOrDefaultAsync(u => u.Id == id);
+            return await _dbSet
+                .Include(c => c.Companies)
+                .Include(f => f.Favorites)
+                .FirstOrDefaultAsync(u => u.Id == id);
         }
+
+        public async Task<User> GetUserChats(int id)
+        {
+            return await _dbSet
+                .Include(u => u.Chat_MessageSenders)
+                .Include(u => u.Chat_MessageReceivers)
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
         public async Task<User> GetUserByEmail(string email)
         {
             return await _dbSet.Where(u => u.Email == email).FirstOrDefaultAsync();
@@ -33,5 +45,7 @@
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
+
+
     }
 }

@@ -1,6 +1,4 @@
-﻿using APIApp.DTOs.Admin;
-using APIApp.DTOs.FavouriteDTOs;
-using APIApp.DTOs.PostsDTOs;
+﻿using APIApp.DTOs.ChatDTOs;
 
 namespace APIApp.AutoMapper
 {
@@ -26,6 +24,7 @@ namespace APIApp.AutoMapper
             CreateMap<imagesDTO, Post_Image>();
             CreateMap<AdminDTO, Admin>();
             CreateMap<PermissionDTO, Permission>();
+            CreateMap<ChatMessageDTO, Chat_Message>();
 
         }
     }

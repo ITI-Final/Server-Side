@@ -66,30 +66,19 @@ namespace OlxDataAccess.DBContext
                     .HasConstraintName("FK_category_category");
             });
 
-            modelBuilder.Entity<Chat>(entity =>
-            {
-                entity.HasOne(d => d.Receiver)
-                    .WithMany(p => p.ChatReceivers)
-                    .HasForeignKey(d => d.Receiver_ID)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_chat_user3");
-
-                entity.HasOne(d => d.Sender)
-                    .WithMany(p => p.ChatSenders)
-                    .HasForeignKey(d => d.Sender_ID)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_chat_user2");
-            });
-
             modelBuilder.Entity<Chat_Message>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.HasOne(d => d.Chat)
-                    .WithMany(p => p.Chat_Messages)
-                    .HasForeignKey(d => d.Chat_Id)
+                entity.HasOne(d => d.Receiver)
+                    .WithMany(p => p.Chat_MessageReceivers)
+                    .HasForeignKey(d => d.Receiver_ID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Chat_Message_Chat1");
+                    .HasConstraintName("FK_Chat_Message_User1");
+
+                entity.HasOne(d => d.Sender)
+                    .WithMany(p => p.Chat_MessageSenders)
+                    .HasForeignKey(d => d.Sender_ID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Chat_Message_User");
             });
 
             modelBuilder.Entity<Choice>(entity =>
