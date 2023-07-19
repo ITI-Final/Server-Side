@@ -1,6 +1,4 @@
-﻿using APIApp.DTOs.Admin;
-
-namespace APIApp.Controllers
+﻿namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -97,8 +95,9 @@ namespace APIApp.Controllers
         #region Get All
         // GET: api/Admins
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Admin>>> GetAll(int? page = null, int? pageSize = null)
+        public async Task<ActionResult<IEnumerable<Admin>>> GetAll(int? page)
         {
+            int? pageSize = 10;
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
@@ -114,6 +113,8 @@ namespace APIApp.Controllers
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, adminsCount, admins));
         }
+
+
 
         //[HttpGet]
         //public async Task<HttpResponseMessage> GetHH()

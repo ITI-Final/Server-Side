@@ -5,6 +5,7 @@ namespace OlxDataAccess.Models
 {
     [Keyless]
     [Table("Field_Role")]
+    [Index("Field_Id", Name = "IX_Field_Role_Field_Id")]
     public partial class Field_Role
     {
         public int Field_Id { get; set; }

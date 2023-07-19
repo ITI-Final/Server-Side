@@ -4,6 +4,8 @@
 namespace OlxDataAccess.Models
 {
     [Table("Favorite")]
+    [Index("Post_Id", Name = "IX_Favorite_Post_Id")]
+    [Index("User_Id", Name = "IX_Favorite_User_Id")]
     public partial class Favorite
     {
         [Key]

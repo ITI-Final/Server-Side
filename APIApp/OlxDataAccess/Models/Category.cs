@@ -4,6 +4,8 @@
 namespace OlxDataAccess.Models
 {
     [Table("Category")]
+    [Index("Admin_Id", Name = "IX_Category_Admin_Id")]
+    [Index("Parent_Id", Name = "IX_Category_Parent_Id")]
     public partial class Category
     {
         public Category()
@@ -41,7 +43,7 @@ namespace OlxDataAccess.Models
         [InverseProperty("InverseParent")]
         public virtual Category Parent { get; set; }
         [InverseProperty("Cat")]
-        public virtual ICollection<Field>? Fields { get; set; }
+        public virtual ICollection<Field> Fields { get; set; }
         [InverseProperty("Parent")]
         public virtual ICollection<Category> InverseParent { get; set; }
         [InverseProperty("Cat")]

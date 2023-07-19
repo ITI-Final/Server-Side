@@ -1,9 +1,4 @@
-﻿using APIApp.DTOs.PostsDTOs;
-using OlxDataAccess.imagesPost.Repositories;
-using OlxDataAccess.Posts.Repositories;
-using System.Text.Json;
-
-namespace APIApp.Controllers
+﻿namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -30,8 +25,9 @@ namespace APIApp.Controllers
 
         #region Get All
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page = null, int? pageSize = null)
+        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page)
         {
+            int? pageSize = 10;
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 

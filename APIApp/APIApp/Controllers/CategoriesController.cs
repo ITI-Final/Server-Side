@@ -2,7 +2,6 @@
 {
     [Route("api/[controller]")]
     [ApiController]
-
     public class CategoriesController : ControllerBase
     {
         protected readonly ICategoryRepository _categoryRepository;
@@ -21,8 +20,9 @@
         // GET: api/Categories
         #region get
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories(int? page = null, int? pageSize = null)
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories(int? page)
         {
+            int? pageSize = 10;
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 

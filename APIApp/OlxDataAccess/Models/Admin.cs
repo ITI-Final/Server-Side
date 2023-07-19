@@ -4,6 +4,8 @@
 namespace OlxDataAccess.Models
 {
     [Table("Admin")]
+    [Index("Name", Name = "NonClusteredIndex-20230716-201110")]
+    [Index("Email", Name = "nonclusteredEmail")]
     public partial class Admin
     {
         public Admin()
@@ -36,8 +38,8 @@ namespace OlxDataAccess.Models
         [InverseProperty("Admin")]
         public virtual ICollection<Category> Categories { get; set; }
 
-        [ForeignKey("Admin")]
+        [ForeignKey("Admin_Id")]
         [InverseProperty("Admins")]
-        public virtual ICollection<Permission> Permissions { get; set; } //= new List<Permission>();
+        public virtual ICollection<Permission> Permissions { get; set; }
     }
 }

@@ -4,6 +4,8 @@
 namespace OlxDataAccess.Models
 {
     [Table("Field")]
+    [Index("Cat_Id", Name = "IX_Field_Cat_Id")]
+    [Index("Parent_Id", Name = "IX_Field_Parent_Id")]
     public partial class Field
     {
         public Field()

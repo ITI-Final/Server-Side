@@ -4,6 +4,8 @@
 namespace OlxDataAccess.Models
 {
     [Table("Chat")]
+    [Index("Sender_ID", Name = "IX_Chat_User_One")]
+    [Index("Receiver_ID", Name = "IX_Chat_User_Two")]
     public partial class Chat
     {
         public Chat()
@@ -13,16 +15,16 @@ namespace OlxDataAccess.Models
 
         [Key]
         public int Id { get; set; }
-        public int User_One { get; set; }
-        public int User_Two { get; set; }
+        public int Sender_ID { get; set; }
+        public int Receiver_ID { get; set; }
         public bool? Block { get; set; }
 
-        [ForeignKey("User_One")]
-        [InverseProperty("ChatUser_OneNavigations")]
-        public virtual User User_OneNavigation { get; set; }
-        [ForeignKey("User_Two")]
-        [InverseProperty("ChatUser_TwoNavigations")]
-        public virtual User User_TwoNavigation { get; set; }
+        [ForeignKey("Receiver_ID")]
+        [InverseProperty("ChatReceivers")]
+        public virtual User Receiver { get; set; }
+        [ForeignKey("Sender_ID")]
+        [InverseProperty("ChatSenders")]
+        public virtual User Sender { get; set; }
         [InverseProperty("Chat")]
         public virtual ICollection<Chat_Message> Chat_Messages { get; set; }
     }
