@@ -1,27 +1,5 @@
 namespace APIApp
 {
-    using APIApp.Repositories.JWT;
-    using APIApp.Services;
-    using APIApp.Services.Authentication;
-    using APIApp.Services.JWT;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.IdentityModel.Tokens;
-    using OlxDataAccess.Admins.Repository;
-    using OlxDataAccess.Categories.Repositories;
-    using OlxDataAccess.Companies.Repositories;
-    using OlxDataAccess.DBContext;
-    using OlxDataAccess.Favourits.FavouritRepositories;
-    using OlxDataAccess.Fields.Repositories;
-    using OlxDataAccess.Governorates.Repositories;
-    using OlxDataAccess.imagesPost.Repositories;
-    using OlxDataAccess.Models;
-    using OlxDataAccess.Posts.Repositories;
-    using OlxDataAccess.Users.Repositories;
-    using System.Security.Claims;
-    using System.Text;
-    using System.Text.Json.Serialization;
-
     public class Program
     {
         public static void Main(string[] args)
@@ -110,6 +88,7 @@ namespace APIApp
             builder.Services.AddScoped<IPostRepository, PostRepository>();
             builder.Services.AddScoped<IFavouriteRepositort, FavouriteRepositort>();
             builder.Services.AddScoped<IImagesPostRepository, ImagePostRepository>();
+            builder.Services.AddScoped<IChatMessagesRepository, ChatMessagesRepository>();
             #endregion
 
             #region AutoMapper
@@ -119,8 +98,6 @@ namespace APIApp
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-
 
             WebApplication? app = builder.Build();
 
@@ -139,8 +116,11 @@ namespace APIApp
 
             app.UseAuthorization();
 
+            app.MapHub<ChatHub>("/chat");
+
             app.MapControllers();
             app.UseStaticFiles();
+
             #region Use Cors
             app.UseCors(policyName: "AllowAll");
             #endregion

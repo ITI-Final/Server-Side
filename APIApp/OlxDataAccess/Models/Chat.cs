@@ -8,24 +8,10 @@ namespace OlxDataAccess.Models
     [Index("Receiver_ID", Name = "IX_Chat_User_Two")]
     public partial class Chat
     {
-        public Chat()
-        {
-            Chat_Messages = new HashSet<Chat_Message>();
-        }
-
         [Key]
         public int Id { get; set; }
         public int Sender_ID { get; set; }
         public int Receiver_ID { get; set; }
         public bool? Block { get; set; }
-
-        [ForeignKey("Receiver_ID")]
-        [InverseProperty("ChatReceivers")]
-        public virtual User Receiver { get; set; }
-        [ForeignKey("Sender_ID")]
-        [InverseProperty("ChatSenders")]
-        public virtual User Sender { get; set; }
-        [InverseProperty("Chat")]
-        public virtual ICollection<Chat_Message> Chat_Messages { get; set; }
     }
 }

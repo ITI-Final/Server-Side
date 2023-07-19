@@ -124,6 +124,21 @@
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, user));
         }
+
+
+        [HttpGet("id/chats")]
+        public async Task<IActionResult> GetUserChats(int id)
+        {
+            if (await _userRepository.GetAll() == null)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
+            User? user = await _userRepository.GetUserChats(id);
+
+            if (user == null)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, user));
+        }
         #endregion
 
         #region Add
@@ -164,8 +179,7 @@
             }
             catch (Exception ex)
             {
-
-                return StatusCode(500, "An error occurred while Updation the user.");
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
             }
         }
         #endregion
