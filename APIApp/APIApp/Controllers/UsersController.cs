@@ -132,7 +132,7 @@
             if (await _userRepository.GetAll() == null)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            User? user = await _userRepository.GetUserChats(id);
+            object? user = _userRepository.GetUserChats(id);
 
             if (user == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
