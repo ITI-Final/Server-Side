@@ -64,20 +64,10 @@
         [HttpGet("{sender}/{receiver}")]
         public async Task<ActionResult<Chat_Message>> GetSenderAndReceiverById(int sender, int receiver)
         {
-            if (await _chatMessagesRepository.GetAll() == null)
+            if (await _chatMessagesRepository.GetAll() == null || IsIDsValid(sender, receiver))
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
             IQueryable<Chat_Message>? chat_Message = _chatMessagesRepository.GetSenderAndReceiverById(sender, receiver);
-        #region Get Chat Bettween Two User
-
-        [HttpGet("{senderId}/{receiverId}")]
-        public async Task<ActionResult<Chat_Message>> GetChatByRecevierId(int senderId, int receiverId)
-        {
-            if (await _chatMessagesRepository.GetAll() == null || IsIDsValid(senderId, receiverId))
-                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
-
-            IQueryable<Chat_Message>? chat_Message = _chatMessagesRepository.GetChatBySenderAndRecevierIds(senderId, receiverId);
-
             if (chat_Message == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
@@ -105,7 +95,7 @@
         }
         #endregion
 
-        #region IsIDs Vaild
+        #region Is IDs Vaild
         private static bool IsIDsValid(int senderId, int receiverId)
         {
             return senderId == receiverId || senderId == 0 || receiverId == 0;
