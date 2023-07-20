@@ -1,6 +1,4 @@
-﻿using APIApp.DTOs.ChatDTOs;
-
-namespace APIApp.Controllers
+﻿namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -70,12 +68,22 @@ namespace APIApp.Controllers
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
             IQueryable<Chat_Message>? chat_Message = _chatMessagesRepository.GetSenderAndReceiverById(sender, receiver);
+        #region Get Chat Bettween Two User
+
+        [HttpGet("{senderId}/{receiverId}")]
+        public async Task<ActionResult<Chat_Message>> GetChatByRecevierId(int senderId, int receiverId)
+        {
+            if (await _chatMessagesRepository.GetAll() == null || IsIDsValid(senderId, receiverId))
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
+            IQueryable<Chat_Message>? chat_Message = _chatMessagesRepository.GetChatBySenderAndRecevierIds(senderId, receiverId);
 
             if (chat_Message == null)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, chat_Message));
         }
+
         #endregion
 
         #endregion
@@ -94,6 +102,13 @@ namespace APIApp.Controllers
             await _chatMessagesRepository.Add(chat);
 
             return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, chat));
+        }
+        #endregion
+
+        #region IsIDs Vaild
+        private static bool IsIDsValid(int senderId, int receiverId)
+        {
+            return senderId == receiverId || senderId == 0 || receiverId == 0;
         }
         #endregion
 

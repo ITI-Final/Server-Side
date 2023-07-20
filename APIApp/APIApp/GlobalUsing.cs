@@ -1,6 +1,7 @@
 ﻿global using APIApp.AppContsants;
 global using APIApp.DTOs.Admin;
 global using APIApp.DTOs.CategoryDTOs;
+global using APIApp.DTOs.ChatDTOs;
 global using APIApp.DTOs.CompanyDTOs;
 global using APIApp.DTOs.FavouriteDTOs;
 global using APIApp.DTOs.GovernorateDTOs;

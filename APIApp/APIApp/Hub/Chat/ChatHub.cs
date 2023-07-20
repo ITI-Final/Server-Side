@@ -1,4 +1,6 @@
-﻿namespace OlxDataAccess
+﻿using System.Collections.Immutable;
+
+namespace OlxDataAccess
 {
     internal class ChatHub : Hub
     {
