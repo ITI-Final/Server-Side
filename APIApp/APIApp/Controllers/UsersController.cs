@@ -66,6 +66,9 @@
         [HttpPost("register")]
         public async Task<IActionResult> AddUser(UserRegister userRegister)
         {
+            if (await _userAuthentication.IsEmailTakenAsync(userRegister.Email))
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.emailIsAlreadyMessage));
+
             try
             {
                 #region Hashing
