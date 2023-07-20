@@ -17,16 +17,21 @@
 
         public object GetUserChats(int id)
         {
-            var result = from cm in _context.Chat_Messages
-                         join sender in _context.Users on cm.Sender_ID equals sender.Id
-                         join receiver in _context.Users on cm.Receiver_ID equals receiver.Id
-                         where sender.Id == id
-                         group receiver by new { receiver.Id, receiver.Name } into g
-                         select new
-                         {
-                             ReceiverId = g.Key.Id,
-                             ReceiverName = g.Key.Name
-                         };
+            var result = (
+                from cm in _context.Chat_Messages
+                join sender in _context.Users on cm.Sender_ID equals sender.Id
+                join receiver in _context.Users on cm.Receiver_ID equals receiver.Id
+                where receiver.Id == 1
+                group sender by new { sender.Name, sender.Id } into g
+                select new { Id = g.Key.Id, Name = g.Key.Name })
+                .Union(
+                from cm in _context.Chat_Messages
+                join sender in _context.Users on cm.Sender_ID equals sender.Id
+                join receiver in _context.Users on cm.Receiver_ID equals receiver.Id
+                where sender.Id == 1
+                group receiver by new { receiver.Name, receiver.Id } into g
+                select new { Id = g.Key.Id, Name = g.Key.Name }
+                );
 
             return result;
         }
