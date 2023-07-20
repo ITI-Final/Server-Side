@@ -95,6 +95,10 @@ namespace APIApp
             builder.Services.AddAutoMapper(typeof(Program));
             #endregion
 
+            #region SignalR
+            builder.Services.AddSignalR();
+            #endregion
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
