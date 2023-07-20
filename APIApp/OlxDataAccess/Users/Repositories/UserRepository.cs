@@ -15,12 +15,20 @@
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<User> GetUserChats(int id)
+        public object GetUserChats(int id)
         {
-            return await _dbSet
-                .Include(u => u.Chat_MessageSenders)
-                .Include(u => u.Chat_MessageReceivers)
-                .FirstOrDefaultAsync(u => u.Id == id);
+            var result = from cm in _context.Chat_Messages
+                         join sender in _context.Users on cm.Sender_ID equals sender.Id
+                         join receiver in _context.Users on cm.Receiver_ID equals receiver.Id
+                         where sender.Id == id
+                         group receiver by new { receiver.Id, receiver.Name } into g
+                         select new
+                         {
+                             ReceiverId = g.Key.Id,
+                             ReceiverName = g.Key.Name
+                         };
+
+            return result;
         }
 
         public async Task<User> GetUserByEmail(string email)

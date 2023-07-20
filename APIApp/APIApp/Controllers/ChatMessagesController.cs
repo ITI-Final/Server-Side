@@ -60,6 +60,14 @@
         }
         #endregion
 
+        #region Get Chat By Sender or Resever
+        [HttpGet("{sender}/{receiver}")]
+        public async Task<ActionResult<Chat_Message>> GetSenderAndReceiverById(int sender, int receiver)
+        {
+            if (await _chatMessagesRepository.GetAll() == null)
+                return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
+
+            IQueryable<Chat_Message>? chat_Message = _chatMessagesRepository.GetSenderAndReceiverById(sender, receiver);
         #region Get Chat Bettween Two User
 
         [HttpGet("{senderId}/{receiverId}")]
