@@ -261,13 +261,21 @@ namespace APIApp.Controllers
             if (id != userDto.Id)
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
 
-            try
+            if (userDto.Password == null)
+            {
+                User user = await _userRepository.GetById(id);
+
+                userDto.Password = user.Password;
+            }
+            else
             {
                 #region Hashing
                 string? passwordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
                 userDto.Password = passwordHash;
                 #endregion
-
+            }
+            try
+            {
                 User? user = _mapper.Map<User>(userDto);
                 await _userRepository.Update(id, user);
 
