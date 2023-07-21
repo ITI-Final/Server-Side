@@ -145,25 +145,30 @@
         #endregion
 
         #region Add
-        //[HttpPost]
-        //public async Task<IActionResult> AddUser(UserDto userDto)
-        //{
-        //    if (await _userRepository.IsEmailTakenAsync(userDto.Email))
-        //        return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.emailIsAlreadyMessage));
+        [HttpPost]
+        public async Task<IActionResult> AddUser(UserDto userDto)
+        {
+            if (await _userRepository.IsEmailTakenAsync(userDto.Email))
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.emailIsAlreadyMessage));
 
-        //    try
-        //    {
-        //        User? user = _mapper.Map<User>(userDto);
-        //        await _userRepository.Add(user);
+            try
+            {
+                #region Hashing
+                string? passwordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+                userDto.Password = passwordHash;
+                #endregion
 
-        //        return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, user));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
-        //    }
+                User? user = _mapper.Map<User>(userDto);
+                await _userRepository.Add(user);
 
-        //}
+                return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, user));
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
+            }
+
+        }
         #endregion
 
         #region Update
