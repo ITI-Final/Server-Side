@@ -1,7 +1,4 @@
-﻿using APIApp.DTOs.FavouriteDTOs;
-using OlxDataAccess.Favourits.FavouritRepositories;
-
-namespace APIApp.Controllers
+﻿namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,11 +19,14 @@ namespace APIApp.Controllers
         }
         #endregion
 
+        #region Methods
+
         #region Get
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Favorite>>> GetAll(int? page = null, int? pageSize = null)
+        public async Task<ActionResult<IEnumerable<Favorite>>> GetAll(int? page)
         {
+            int? pageSize = 10;
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
@@ -101,5 +101,8 @@ namespace APIApp.Controllers
             return Ok(AppConstants.Response<string>(AppConstants.successCode, AppConstants.deleteSuccessMessage));
         }
         #endregion
+
+        #endregion
+
     }
 }

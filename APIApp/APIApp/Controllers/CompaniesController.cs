@@ -1,8 +1,5 @@
 ﻿namespace APIApp.Controllers
 {
-    using OlxDataAccess.Companies.Repositories;
-    using OlxDataAccess.Models;
-
     [Route("api/[controller]")]
     [ApiController]
     public class CompaniesController : ControllerBase
@@ -28,8 +25,9 @@
 
         #region Get All
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Company>>> GetAllCompanies(int? page = null, int? pageSize = null)
+        public async Task<ActionResult<IEnumerable<Company>>> GetAllCompanies(int? page)
         {
+            int? pageSize = 10;
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
@@ -113,10 +111,6 @@
         #endregion
 
         #endregion
-
-
-
-
 
     }
 }

@@ -3,6 +3,7 @@
 
 namespace OlxDataAccess.Models
 {
+    [Index("Governorate_Id", Name = "IX_Cities_Governorate_Id")]
     public partial class City
     {
         public City()

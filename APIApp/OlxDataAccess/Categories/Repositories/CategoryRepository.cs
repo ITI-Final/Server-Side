@@ -4,6 +4,9 @@ namespace OlxDataAccess.Categories.Repositories
 {
 
 
+
+
+
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {
         private readonly OLXContext _dbContext;

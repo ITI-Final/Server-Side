@@ -1,6 +1,4 @@
-﻿using OlxDataAccess.Governorates.Repositories;
-
-namespace APIApp.Controllers
+﻿namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
