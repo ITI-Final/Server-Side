@@ -1,3 +1,5 @@
+using APIApp.Services.JWT;
+
 namespace APIApp
 {
     public class Program
@@ -119,6 +121,7 @@ namespace APIApp
             #endregion
 
             app.UseAuthorization();
+            //app.UseMiddleware<JwtMiddleWare>();
 
             app.MapHub<ChatHub>("/chat");
 

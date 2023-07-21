@@ -1,5 +1,9 @@
-﻿namespace APIApp.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+using System.Data;
+
+namespace APIApp.Controllers
 {
+ 
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -90,7 +94,9 @@
         #endregion
 
         #region Get
+        [Authorize(Roles = "Admin")]
         [HttpGet]
+     
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int? page)
         {
             int? pageSize = 10;
