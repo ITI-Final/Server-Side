@@ -6,6 +6,32 @@
         {
         }
 
+        #region Auth
+        public async Task<User> Login(string email)
+        {
+            return await _context
+                .Users
+                .FirstOrDefaultAsync(a => a.Email == email);
+        }
+
+
+        public async Task Register(User user)
+        {
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsEmailTakenAsync(string email)
+        {
+            return await _context.Users.AnyAsync(a => a.Email == email);
+        }
+        #endregion
+
+        #region Get
+        public async Task<User> GetByEmail(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
 
         public override async Task<User> GetById(int id)
         {
@@ -40,28 +66,7 @@
         {
             return await _dbSet.Where(u => u.Email == email).FirstOrDefaultAsync();
         }
+        #endregion
 
-        public async Task<User> Login(string email)
-        {
-            return await _context
-                .Users
-                .FirstOrDefaultAsync(a => a.Email == email);
-        }
-
-        public async Task<bool> IsEmailTakenAsync(string email)
-        {
-            return await _context.Users.AnyAsync(a => a.Email == email);
-        }
-
-        public async Task Register(User user)
-        {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<User> GetByEmail(string email)
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        }
     }
 }

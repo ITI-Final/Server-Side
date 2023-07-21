@@ -1,4 +1,6 @@
-﻿namespace APIApp.Controllers
+﻿using APIApp.DTOs;
+
+namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -86,6 +88,37 @@
             #endregion
 
             return Ok(AppConstants.LoginSuccessfully(adminLoginDTO, _jwt.GenentateToken(claims, numberOfDays: 1)));
+        }
+        #endregion
+
+        #region Change Password
+        [HttpPost("changepassword")]
+        public async Task<IActionResult> ChangePassword([FromForm] ChanegPassword model, int id)
+        {
+            Admin? admin = await _adminRepository.GetById(id);
+
+            if (admin == null || admin.Id != id)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+            #region Check Hashing
+            if (!BCrypt.Net.BCrypt.Verify(model.OldPassword, admin.Password))
+                return Unauthorized(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.passwordIsInvalid));
+            #endregion
+
+            #region Hashing new One
+            string? passwordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            admin.Password = passwordHash;
+            #endregion
+
+            try
+            {
+                await _adminRepository.Update(id, admin);
+                return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, 1, 1, 1, admin));
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
+            }
         }
         #endregion
         #endregion
