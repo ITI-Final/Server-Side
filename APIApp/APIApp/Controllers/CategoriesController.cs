@@ -1,4 +1,7 @@
-﻿namespace APIApp.Controllers
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using OlxDataAccess.Models;
+
+namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -19,24 +22,26 @@
         #endregion
         // GET: api/Categories
         #region get
+        //int? page = null, int? pageSize = null
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories(int? page)
+
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            int? pageSize = 10;
-            if (page < 1 || pageSize < 1)
-                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+            //  if (page < 1 || pageSize < 1)
+            //return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
 
             int CategoriesCount = _categoryRepository.GetAll().Result.Count();
             if (CategoriesCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            IEnumerable<Category> categories = await _categoryRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? CategoriesCount);
-
-            int totalPages = (int)Math.Ceiling((double)CategoriesCount / pageSize ?? CategoriesCount);
-            if (totalPages < page)
-                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
-
-            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, CategoriesCount, categories));
+            // IEnumerable<Category> categories = await _categoryRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? CategoriesCount);
+            IEnumerable<Category> categories = await _categoryRepository.GetAll();
+            //int totalPages = (int)Math.Ceiling((double)CategoriesCount / pageSize ?? CategoriesCount);
+            //if (totalPages < page)
+            //  return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+            //page ?? 1, totalPages,
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, CategoriesCount, categories));
         }
 
         [HttpGet("{id}")]
@@ -77,6 +82,22 @@
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, getCategortNameDTOs));
         }
+
+        #region categorywithposts
+        [HttpGet]
+        [Route("withPosts/{slug}")]
+        public async Task<ActionResult> catWithPosts(string slug)
+        {
+            Category categories = await _categoryRepository.GetCategoryWithPosts(slug);
+            await Console.Out.WriteLineAsync(slug);
+            if (categories == null)
+            {
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+            }
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, categories));
+        }
+
+        #endregion
         #endregion
 
         #region Post

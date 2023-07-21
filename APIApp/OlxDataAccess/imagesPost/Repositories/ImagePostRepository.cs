@@ -32,7 +32,7 @@
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload\postImages", special + "-" + file.FileName);
             using (FileStream ms = new FileStream(filePath, FileMode.Create))
             {
-                file.CopyToAsync(ms);
+                await file.CopyToAsync(ms);
             }
             var filename = special + "-" + file.FileName;
             //  return $"{filename}";
