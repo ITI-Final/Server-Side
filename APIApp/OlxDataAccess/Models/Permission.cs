@@ -21,7 +21,7 @@ namespace OlxDataAccess.Models
         public bool Can_Edit { get; set; }
         public bool Can_Delete { get; set; }
 
-        [ForeignKey("Permission")]
+        [ForeignKey("Permission_Id")]
         [InverseProperty("Permissions")]
         public virtual ICollection<Admin> Admins { get; set; }
     }

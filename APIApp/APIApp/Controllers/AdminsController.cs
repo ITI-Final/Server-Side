@@ -1,4 +1,4 @@
-﻿using APIApp.DTOs.Admin;
+﻿using APIApp.DTOs;
 
 namespace APIApp.Controllers
 {
@@ -90,6 +90,37 @@ namespace APIApp.Controllers
             return Ok(AppConstants.LoginSuccessfully(adminLoginDTO, _jwt.GenentateToken(claims, numberOfDays: 1)));
         }
         #endregion
+
+        #region Change Password
+        [HttpPost("changepassword")]
+        public async Task<IActionResult> ChangePassword([FromForm] ChanegPassword model, int id)
+        {
+            Admin? admin = await _adminRepository.GetById(id);
+
+            if (admin == null || admin.Id != id)
+                return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+            #region Check Hashing
+            if (!BCrypt.Net.BCrypt.Verify(model.OldPassword, admin.Password))
+                return Unauthorized(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.passwordIsInvalid));
+            #endregion
+
+            #region Hashing new One
+            string? passwordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            admin.Password = passwordHash;
+            #endregion
+
+            try
+            {
+                await _adminRepository.Update(id, admin);
+                return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.updateSuccessMessage, 1, 1, 1, admin));
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
+            }
+        }
+        #endregion
         #endregion
 
         #region Get
@@ -97,8 +128,9 @@ namespace APIApp.Controllers
         #region Get All
         // GET: api/Admins
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Admin>>> GetAll(int? page = null, int? pageSize = null)
+        public async Task<ActionResult<IEnumerable<Admin>>> GetAll(int? page)
         {
+            int? pageSize = 10;
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
@@ -114,6 +146,8 @@ namespace APIApp.Controllers
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, page ?? 1, totalPages, adminsCount, admins));
         }
+
+
 
         //[HttpGet]
         //public async Task<HttpResponseMessage> GetHH()

@@ -1,5 +1,4 @@
-﻿
-namespace APIApp.DTOs.PostsDTOs
+﻿namespace APIApp.DTOs.PostsDTOs
 {
     public class returnChoicesDTO
     {

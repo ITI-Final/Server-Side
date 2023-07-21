@@ -10,7 +10,6 @@
         }
         #endregion
 
-
         #region GetById
         public override Task<Field> GetById(int id)
         {
@@ -18,6 +17,4 @@
         }
         #endregion
     }
-
-
 }

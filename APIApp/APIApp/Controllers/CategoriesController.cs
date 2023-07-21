@@ -5,7 +5,6 @@ namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
     public class CategoriesController : ControllerBase
     {
         protected readonly ICategoryRepository _categoryRepository;
@@ -25,10 +24,12 @@ namespace APIApp.Controllers
         #region get
         //int? page = null, int? pageSize = null
         [HttpGet]
+
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
             //  if (page < 1 || pageSize < 1)
             //return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+
 
             int CategoriesCount = _categoryRepository.GetAll().Result.Count();
             if (CategoriesCount == 0)

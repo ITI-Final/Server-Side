@@ -1,9 +1,4 @@
-﻿using APIApp.DTOs.PostsDTOs;
-using OlxDataAccess.imagesPost.Repositories;
-using OlxDataAccess.Posts.Repositories;
-using System.Text.Json;
-
-namespace APIApp.Controllers
+﻿namespace APIApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -30,8 +25,9 @@ namespace APIApp.Controllers
 
         #region Get All
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page = null, int? pageSize = null)
+        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page)
         {
+            int? pageSize = 10;
             if (page < 1 || pageSize < 1)
                 return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
 
@@ -59,7 +55,7 @@ namespace APIApp.Controllers
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
             #region serializer for fields value
-            //[{ "fieldID": 3, "choices": [1, 2] }]
+            //[{ "fieldID": 3, "Choices": [1, 2] }]
             List<FieldValuesDTO> fieldvalue = JsonSerializer.Deserialize<List<FieldValuesDTO>>(post.Fields)!;
             #endregion
 
@@ -110,7 +106,7 @@ namespace APIApp.Controllers
                     Field_Name = item.Name,
                     Field_Label = item.Label,
                     Field_Label_Ar = item.Label_Ar,
-                    choices = c,
+                    Choices = c,
 
                 };
                 f.Add(returnFieldDTO);

@@ -4,6 +4,7 @@
 namespace OlxDataAccess.Models
 {
     [Table("Choice")]
+    [Index("Field_Id", Name = "IX_Choice_Field_Id")]
     public partial class Choice
     {
         [Key]

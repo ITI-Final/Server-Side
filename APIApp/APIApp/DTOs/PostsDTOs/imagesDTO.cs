@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace APIApp.DTOs.PostsDTOs
+﻿namespace APIApp.DTOs.PostsDTOs
 {
     public class imagesDTO
     {
