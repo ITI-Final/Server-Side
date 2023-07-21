@@ -90,6 +90,56 @@
         }
         #endregion
 
+        #region Forget Password
+        //[HttpPost]
+        //[Route("forgotpassword")]
+        //public async Task<IActionResult> ForgotPassword([FromBody] string email)
+        //{
+        //    User user = await _userRepository.GetByEmail(email);
+
+        //    if (user == null)
+        //        return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
+
+
+        //    #region Define Claims
+        //    List<Claim> claims = new List<Claim>()
+        //    {
+        //        new Claim(JwtRegisteredClaimNames.Sub, _configuration[key: "Jwt:Subject"]),
+        //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        //        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+        //        new Claim(ClaimTypes.Role , "User"),
+        //        new Claim(type: "Id", user.Id.ToString()),
+        //    };
+        //    #endregion
+
+        //    string? token = _jwt.GenentateToken(claims, 1);
+        //    string? encodedToken = HttpUtility.UrlEncode(token);
+
+        //    string? resetUrl = $"https://api/resetpassword?token={encodedToken}";
+
+        //    // Send an email to the user with a link to the password reset page.
+        //    await SendPasswordResetEmailAsync(user.Email, resetUrl);
+
+        //    return Ok();
+        //}
+
+        //private static async Task SendPasswordResetEmailAsync(string email, string resetUrl)
+        //{
+        //    MailMessage? message = new MailMessage();
+        //    message.From = new MailAddress(address: "olx-secuirty@olxe.com", displayName: "Security OLX");
+        //    message.To.Add(email);
+        //    message.Subject = "Password Reset Request";
+        //    message.Body = $"Please click this link to reset your password: {resetUrl}";
+
+        //    using (SmtpClient? client = new SmtpClient("smtp.example.com", 587))
+        //    {
+        //        client.Credentials = new NetworkCredential("your-email@example.com", "your-password");
+        //        client.EnableSsl = true;
+        //        await client.SendMailAsync(message);
+        //    }
+        //}
+        #endregion
+
         #endregion
 
         #region Get
@@ -180,6 +230,11 @@
 
             try
             {
+                #region Hashing
+                string? passwordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+                userDto.Password = passwordHash;
+                #endregion
+
                 User? user = _mapper.Map<User>(userDto);
                 await _userRepository.Update(id, user);
 
