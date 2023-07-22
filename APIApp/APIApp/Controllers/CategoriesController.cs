@@ -89,7 +89,7 @@ namespace APIApp.Controllers
         public async Task<ActionResult> catWithPosts(string slug)
         {
             Category categories = await _categoryRepository.GetCategoryWithPosts(slug);
-            await Console.Out.WriteLineAsync(slug);
+            //await Console.Out.WriteLineAsync(slug);
             if (categories == null)
             {
                 return NotFound(AppConstants.Response<string>(AppConstants.notFoundCode, AppConstants.notFoundMessage));
