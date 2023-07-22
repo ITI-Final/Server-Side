@@ -16,7 +16,7 @@ namespace OlxDataAccess.Categories.Repositories
         }
         public override async Task<IEnumerable<Category>> GetAll()
         {
-            return await _dbContext.Categories.Include(o => o.Posts).ThenInclude(o => o.Post_Images).Include(q => q.Fields).ThenInclude(a => a.Choices).Include(o => o.InverseParent).ThenInclude(o => o.InverseParent).ToListAsync();
+            return await _dbContext.Categories.Include(o => o.Posts).ThenInclude(o => o.Post_Images).Include(o => o.Posts).ThenInclude(o => o.Post_LocationNavigation).ThenInclude(o => o.Governorate).Include(q => q.Fields).ThenInclude(a => a.Choices).Include(o => o.InverseParent).ThenInclude(o => o.InverseParent).ToListAsync();
 
         }
         public async override Task<Category> GetById(int id)
@@ -26,6 +26,10 @@ namespace OlxDataAccess.Categories.Repositories
         }
         public async Task<Category> GetCategoryWithPosts(string slug)
         {
+            return await _dbContext.Categories.Include(o => o.Posts).ThenInclude(o => o.Post_Images).Include(o => o.Posts).ThenInclude(o => o.Post_LocationNavigation).ThenInclude(o => o.Governorate).FirstOrDefaultAsync(o => o.Slug == slug);
+
+
+
             return await _dbContext.Categories.Include(o => o.Posts).ThenInclude(o => o.Post_Images).FirstOrDefaultAsync(o => o.Slug == slug);
         }
 
