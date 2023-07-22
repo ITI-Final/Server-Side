@@ -200,7 +200,7 @@ namespace APIApp.Controllers
 
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
             if (await _userRepository.GetAll() == null)

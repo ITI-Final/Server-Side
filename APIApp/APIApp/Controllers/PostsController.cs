@@ -115,6 +115,23 @@
             #endregion
 
             #region return post with with it's chocien value
+            GovernoratePostDTO g = new GovernoratePostDTO()
+            {
+                Id = post.Post_LocationNavigation.Governorate.Id,
+                Governorate_Name_En = post.Post_LocationNavigation.Governorate.Governorate_Name_En,
+                Governorate_Name_Ar = post.Post_LocationNavigation.Governorate.Governorate_Name_Ar,
+
+            };
+            CityPostDTO cities = new CityPostDTO()
+            {
+                City_Name_Ar = post.Post_LocationNavigation.City_Name_Ar,
+                City_Name_En = post.Post_LocationNavigation.City_Name_En,
+                Id = post.Post_LocationNavigation.Id,
+                Governorate = g,
+
+            };
+
+
             List<GetImagesPostDTO> i = new List<GetImagesPostDTO>();
             foreach (var item in post.Post_Images)
             {
@@ -135,6 +152,7 @@
                 Created_Date = post.Created_Date,
                 Description = post.Description,
                 Fields = f,
+                Post_LocationNavigation = cities,
                 Post_Image = i,
                 Is_Special = post.Is_Special,
                 Is_Visible = post.Is_Visible,

@@ -15,7 +15,7 @@
         public int Contact_Method { get; set; }
         public int? Post_Location { get; set; }
         public DateTime? Created_Date { get; set; }
-
+        public CityPostDTO Post_LocationNavigation { get; set; }
         public bool? Is_Visible { get; set; }
         public int Views { get; set; }
         public bool Is_Special { get; set; }
