@@ -1,8 +1,12 @@
 ﻿using APIApp.DTOs;
 using Microsoft.AspNetCore.Authorization;
 
+using System.Data;
+
+
 namespace APIApp.Controllers
 {
+ 
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -143,6 +147,7 @@ namespace APIApp.Controllers
         #endregion
 
         #region Change Password
+        [Authorize(Roles = "User")]
         [HttpPost("changepassword")]
         public async Task<IActionResult> ChangePassword([FromForm] ChanegPassword model, int id)
         {
@@ -176,7 +181,9 @@ namespace APIApp.Controllers
         #endregion
 
         #region Get
+        [Authorize(Roles = "Admin")]
         [HttpGet]
+     
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int? page)
         {
             int? pageSize = 10;
@@ -197,7 +204,7 @@ namespace APIApp.Controllers
 
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
             if (await _userRepository.GetAll() == null)
@@ -226,6 +233,7 @@ namespace APIApp.Controllers
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, user));
         }
         #endregion
+
 
         #region Add
         [HttpPost]
@@ -256,6 +264,7 @@ namespace APIApp.Controllers
         #endregion
 
         #region Update
+        [Authorize(Roles = "User")]
         [HttpPut("id")]
         public async Task<IActionResult> UpdateUser([FromBody] UserDto userDto, int id)
         {
@@ -290,7 +299,7 @@ namespace APIApp.Controllers
         #endregion
 
         #region Delete
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("id")]
         public async Task<IActionResult> DeleteUser(int id)
         {

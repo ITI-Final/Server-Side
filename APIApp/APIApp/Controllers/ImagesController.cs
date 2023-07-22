@@ -14,6 +14,16 @@
         }
 
         #region get
+        [HttpGet]
+        public async Task<ActionResult<List<Post_Image>>> getAll()
+        {
+            IEnumerable<Post_Image> p = await _imagesPostRepository.GetAll();
+            if (p.Count() == 0)
+            {
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.invalidMessage));
+            }
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, data: p));
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<List<Post_Image>>> getBYPostId(int id)
         {
