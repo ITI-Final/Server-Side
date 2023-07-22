@@ -1,4 +1,5 @@
 ﻿using APIApp.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIApp.Controllers
 {
@@ -92,6 +93,7 @@ namespace APIApp.Controllers
         #endregion
 
         #region Change Password
+        [Authorize(Roles ="Admin")]
         [HttpPost("changepassword")]
         public async Task<IActionResult> ChangePassword([FromForm] ChanegPassword model, int id)
         {
@@ -127,6 +129,7 @@ namespace APIApp.Controllers
 
         #region Get All
         // GET: api/Admins
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Admin>>> GetAll(int? page)
         {
@@ -171,7 +174,7 @@ namespace APIApp.Controllers
 
         #region Get By Id
         // GET: api/Admin/5
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Admin>> GetAdminById(int id)
         {
@@ -217,6 +220,7 @@ namespace APIApp.Controllers
 
         #region Update
         // PUT: api/Admin/5
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Admin admin)
         {
@@ -239,6 +243,7 @@ namespace APIApp.Controllers
 
         #region Delete
         // DELETE: api/Admin/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
