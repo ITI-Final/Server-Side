@@ -1,5 +1,3 @@
-using APIApp.Services.JWT;
-
 namespace APIApp
 {
     public class Program
@@ -77,6 +75,7 @@ namespace APIApp
 
             #region Dependency Injection
             builder.Services.AddScoped<IJWT, JWTRepository>();
+            builder.Services.AddTransient<ChatHub>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IAuthentication<Admin>, AdminRepository>();
             builder.Services.AddScoped<IAuthentication<User>, UserRepository>();
@@ -91,6 +90,7 @@ namespace APIApp
             builder.Services.AddScoped<IFavouriteRepositort, FavouriteRepositort>();
             builder.Services.AddScoped<IImagesPostRepository, ImagePostRepository>();
             builder.Services.AddScoped<IChatMessagesRepository, ChatMessagesRepository>();
+            builder.Services.AddScoped<IUserConnectionRepository, UserConnectionRepository>();
             #endregion
 
             #region AutoMapper
