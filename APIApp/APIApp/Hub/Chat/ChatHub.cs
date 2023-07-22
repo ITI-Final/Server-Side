@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace OlxDataAccess
+﻿namespace OlxDataAccess
 {
     internal class ChatHub : Hub
     {
@@ -44,7 +42,7 @@ namespace OlxDataAccess
             #endregion
 
             #region Call Back Function
-            await Clients.Clients(listOfConnectionsID).SendAsync("retrieveMessage", sender.Name, chat.Message);
+            await Clients.Clients(listOfConnectionsID).SendAsync("retrieveMessage", chat);
             #endregion
         }
         #endregion
