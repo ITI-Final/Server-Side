@@ -1,12 +1,9 @@
 ﻿using APIApp.DTOs;
 using Microsoft.AspNetCore.Authorization;
 
-using System.Data;
-
-
 namespace APIApp.Controllers
 {
- 
+
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -183,7 +180,7 @@ namespace APIApp.Controllers
         #region Get
         [Authorize(Roles = "Admin")]
         [HttpGet]
-     
+
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int? page)
         {
             int? pageSize = 10;
