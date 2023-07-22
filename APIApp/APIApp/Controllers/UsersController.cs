@@ -234,7 +234,32 @@ namespace APIApp.Controllers
         #endregion
 
 
+        #region add
+        [HttpPost]
+        public async Task<IActionResult> AddUser(UserDto userDto)
+        {
+            if (await _userRepository.IsEmailTakenAsync(userDto.Email))
+                return BadRequest(AppConstants.Response<string>(AppConstants.badRequestCode, AppConstants.emailIsAlreadyMessage));
 
+            try
+            {
+                #region Hashing
+                string? passwordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+                userDto.Password = passwordHash;
+                #endregion
+
+                User? user = _mapper.Map<User>(userDto);
+                await _userRepository.Add(user);
+
+                return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, user));
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
+            }
+
+        } 
+        #endregion
         #region Update
         [Authorize(Roles = "User")]
         [HttpPut("id")]
