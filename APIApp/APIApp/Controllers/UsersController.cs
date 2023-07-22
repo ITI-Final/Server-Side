@@ -1,4 +1,5 @@
 ﻿using APIApp.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIApp.Controllers
 {
@@ -64,7 +65,6 @@ namespace APIApp.Controllers
         #endregion
 
         #region Register
-
         [HttpPost("register")]
         public async Task<IActionResult> AddUser(UserRegister userRegister)
         {
@@ -229,6 +229,7 @@ namespace APIApp.Controllers
 
         #region Add
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUser(UserDto userDto)
         {
             if (await _userRepository.IsEmailTakenAsync(userDto.Email))
