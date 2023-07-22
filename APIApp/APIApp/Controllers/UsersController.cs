@@ -27,8 +27,6 @@ namespace APIApp.Controllers
         }
         #endregion
 
-        #region Methods
-
         #region Authentication
 
         #region Login
@@ -259,18 +257,7 @@ namespace APIApp.Controllers
         }
         #endregion
 
-                User? user = _mapper.Map<User>(userDto);
-                await _userRepository.Add(user);
 
-                return Created("", AppConstants.Response<object>(AppConstants.successCode, AppConstants.addSuccessMessage, 1, 1, 1, user));
-            }
-            catch (Exception ex)
-            {
-                return Problem(statusCode: AppConstants.errorCode, title: AppConstants.errorMessage);
-            }
-
-        } 
-        #endregion
         #region Update
         [Authorize(Roles = "User")]
         [HttpPut("id")]
@@ -328,6 +315,7 @@ namespace APIApp.Controllers
         }
         #endregion
 
-        #endregion
+
     }
 }
+

@@ -19,7 +19,7 @@
         #region Method
 
         #region Send Message
-        public async void SendMessage(Chat_Message chat)
+        public  async void  SendMessage(Chat_Message chat)
         {
 
             #region Error Ya Salmaaaaa !!!!!!!!!!!!!
@@ -35,8 +35,8 @@
             #endregion
 
             #region Get Users
-            User? sender = await _context.Users.Where(u => u.Id == chat.Sender_ID).FirstOrDefaultAsync();
-            User? receiver = await _context.Users.Where(u => u.Id == chat.Receiver_ID).FirstOrDefaultAsync();
+            User? sender =  _context.Users.Where(u => u.Id == chat.Sender_ID).FirstOrDefault();
+            User? receiver =  _context.Users.Where(u => u.Id == chat.Receiver_ID).FirstOrDefault();
 
             if (sender == null || receiver == null) return;
             #endregion
@@ -48,8 +48,8 @@
             #region Save Into Database
             try
             {
-                await _context.Chat_Messages.AddAsync(chat);
-                await _context.SaveChangesAsync();
+                _context.Chat_Messages.Add(chat);
+                _context.SaveChanges();
             }
             catch (Exception)
             {
@@ -58,7 +58,9 @@
             #endregion
 
             #region Call Back Function
-            await Clients.Clients(listOfConnectionsID).SendAsync("retrieveMessage", chat);
+            //await Clients.Clients(listOfConnectionsID).SendAsync("retrieveMessage", chat.Message,chat.Date,chat.Time,chat.Receiver_ID,chat.Sender_ID,chat.Id);
+            await Clients.Clients(listOfConnectionsID).SendAsync("retrieveMessage", chat.Message);
+
             #endregion
         }
         #endregion

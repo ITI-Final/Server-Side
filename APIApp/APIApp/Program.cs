@@ -9,7 +9,7 @@ namespace APIApp
             #region Cors
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", builder =>
+                options.AddPolicy("*", builder =>
                 {
                     builder
                     .WithOrigins("http://localhost:4200")
@@ -129,7 +129,7 @@ namespace APIApp
             app.UseStaticFiles();
 
             #region Use Cors
-            app.UseCors(policyName: "AllowAll");
+            app.UseCors(policyName: "*");
             #endregion
 
             app.Run();
