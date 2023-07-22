@@ -9,6 +9,12 @@
         {
             _dbContext = context;
         }
+
+        public override async Task<IEnumerable<Post_Image>> GetAll()
+        {
+            return await _dbContext.Post_Images.OrderBy(r => Guid.NewGuid()).Take(6).ToListAsync();
+        }
+
         public async Task addmultImage(List<Post_Image> p)
         {
 
