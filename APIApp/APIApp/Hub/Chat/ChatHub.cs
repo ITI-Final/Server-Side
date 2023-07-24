@@ -7,10 +7,9 @@
         #endregion
 
         #region Constructors
-        public ChatHub(OLXContext oLXContext, IUserRepository userRepository)
+        public ChatHub(OLXContext oLXContext)
         {
             _context = oLXContext;
-            _userRepository = userRepository;
         }
         #endregion
 

@@ -176,9 +176,8 @@ namespace APIApp.Controllers
         #endregion
 
         #region Get
-        [Authorize(Roles = "Admin")]
         [HttpGet]
-
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int? page)
         {
             int? pageSize = 10;
@@ -256,7 +255,6 @@ namespace APIApp.Controllers
 
         }
         #endregion
-
 
         #region Update
         [Authorize(Roles = "User")]
