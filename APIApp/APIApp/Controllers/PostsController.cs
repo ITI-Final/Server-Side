@@ -25,7 +25,7 @@
 
         #region Get All
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page, bool? isSortedByPriceAscending, bool? isSortedByPriceDescending)
+        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page, bool? isSortedByPriceAscending, string? governorate, string? city)
         {
             int? pageSize = 10;
             if (page < 1 || pageSize < 1)
@@ -35,7 +35,9 @@
             if (postsCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            IQueryable<Post>? posts = _postsReposirory.GetAllWithSorting(page: page ?? 1, pageSize: pageSize ?? postsCount, isSortedByPriceAscending);
+            //IQueryable<Post>? posts = _postsReposirory.GetAllWithSorting(page: page ?? 1, pageSize: pageSize ?? postsCount, isSortedByPriceAscending); 
+
+            IQueryable<Post>? posts = _postsReposirory.GetPostsInCity(page: page ?? 1, pageSize: pageSize ?? postsCount, isSortedByPriceAscending, governorate, city);
 
             int totalPages = (int)Math.Ceiling((double)postsCount / pageSize ?? postsCount);
             if (totalPages < page)

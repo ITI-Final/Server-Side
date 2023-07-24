@@ -34,5 +34,28 @@
                 .Take(pageSize)
                 .Include(p => p.Post_Images);
         }
+
+        public IQueryable<Post> GetPostsInCity(int page, int pageSize, bool? isSortingAsc, string? governorate, string? city)
+        {
+            IQueryable<Post> posts = _context.Posts;
+
+            if (governorate != null)
+                posts.Where(p => p.Post_LocationNavigation.Governorate.Governorate_Name_En == governorate);
+
+            if (city != null)
+                posts.Where(p => p.Post_LocationNavigation.City_Name_En == city);
+
+            if (isSortingAsc.HasValue)
+                if (isSortingAsc == true)
+                    return posts.OrderBy(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
+                else
+                    return posts.OrderByDescending(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
+
+            return posts
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Include(p => p.Post_Images);
+        }
+
     }
 }
