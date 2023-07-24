@@ -93,7 +93,7 @@ namespace APIApp.Controllers
         #endregion
 
         #region Change Password
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("changepassword")]
         public async Task<IActionResult> ChangePassword([FromForm] ChanegPassword model, int id)
         {
@@ -141,7 +141,7 @@ namespace APIApp.Controllers
             if (adminsCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            IEnumerable<Admin> admins = await _adminRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? adminsCount);
+            IQueryable<Admin> admins = await _adminRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? adminsCount);
 
             int totalPages = (int)Math.Ceiling((double)adminsCount / pageSize ?? adminsCount);
             if (totalPages < page)

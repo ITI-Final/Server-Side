@@ -32,7 +32,7 @@ namespace APIApp.Controllers
             if (usersCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            IEnumerable<User_Connection> user_Connection = await _userConnectionRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? usersCount);
+            IQueryable<User_Connection> user_Connection = await _userConnectionRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? usersCount);
 
             int totalPages = (int)Math.Ceiling((double)usersCount / pageSize ?? usersCount);
             if (totalPages < page)

@@ -34,7 +34,7 @@
             if (chat_MessagesCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            IEnumerable<Chat_Message> chat_Messages = await _chatMessagesRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? chat_MessagesCount);
+            IQueryable<Chat_Message> chat_Messages = await _chatMessagesRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? chat_MessagesCount);
 
             int totalPages = (int)Math.Ceiling((double)chat_MessagesCount / pageSize ?? chat_MessagesCount);
             if (totalPages < page)

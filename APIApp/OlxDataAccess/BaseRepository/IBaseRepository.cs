@@ -10,7 +10,7 @@
         /// </summary>
         /// <returns>IEnumerable (List) of Entities </returns>
         Task<IEnumerable<T>> GetAll();
-        Task<IEnumerable<T>> GetAllWithPagination(int page, int pageSize);
+        Task<IQueryable<T>> GetAllWithPagination(int page, int pageSize);
         #endregion
 
         #region Get By Id
