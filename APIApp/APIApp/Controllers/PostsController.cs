@@ -56,6 +56,7 @@
             if (post == null)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
+            #region V1 Mostafa
             //    #region serializer for fields value
             //    //[{ "fieldID": 3, "Choices": [1, 2] }]
             //    //List<FieldValuesDTO> fieldvalue = JsonSerializer.Deserialize<List<FieldValuesDTO>>(post.Fields)!;
@@ -185,6 +186,7 @@
             //        Views = post.Views
             //    };
 
+            #endregion
 
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, post));
         }
