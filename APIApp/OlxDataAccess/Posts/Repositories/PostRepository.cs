@@ -15,5 +15,10 @@
         {
             return await _context.Posts.Include(o => o.Post_Images).ToListAsync();
         }
+
+        public async Task<IEnumerable<Post>> GetByUserId(int id)
+        {
+            return await _context.Posts.Include(o => o.Post_Images).Include(o => o.Post_LocationNavigation).ThenInclude(o => o.Governorate).Include(o => o.Cat).Where( o => o.User_Id == id).ToListAsync();
+        }
     }
 }
