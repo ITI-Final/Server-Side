@@ -9,7 +9,7 @@ namespace APIApp
             #region Cors
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", builder =>
+                options.AddPolicy("*", builder =>
                 {
                     builder
                     .WithOrigins("http://localhost:4200")
@@ -75,6 +75,7 @@ namespace APIApp
 
             #region Dependency Injection
             builder.Services.AddScoped<IJWT, JWTRepository>();
+            builder.Services.AddTransient<ChatHub>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IAuthentication<Admin>, AdminRepository>();
             builder.Services.AddScoped<IAuthentication<User>, UserRepository>();
@@ -89,6 +90,7 @@ namespace APIApp
             builder.Services.AddScoped<IFavouriteRepositort, FavouriteRepositort>();
             builder.Services.AddScoped<IImagesPostRepository, ImagePostRepository>();
             builder.Services.AddScoped<IChatMessagesRepository, ChatMessagesRepository>();
+            builder.Services.AddScoped<IUserConnectionRepository, UserConnectionRepository>();
             #endregion
 
             #region AutoMapper
@@ -119,6 +121,7 @@ namespace APIApp
             #endregion
 
             app.UseAuthorization();
+            //app.UseMiddleware<JwtMiddleWare>();
 
             app.MapHub<ChatHub>("/chat");
 
@@ -126,7 +129,7 @@ namespace APIApp
             app.UseStaticFiles();
 
             #region Use Cors
-            app.UseCors(policyName: "AllowAll");
+            app.UseCors(policyName: "*");
             #endregion
 
             app.Run();

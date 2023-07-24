@@ -47,14 +47,14 @@
                 from cm in _context.Chat_Messages
                 join sender in _context.Users on cm.Sender_ID equals sender.Id
                 join receiver in _context.Users on cm.Receiver_ID equals receiver.Id
-                where receiver.Id == 1
+                where receiver.Id == id
                 group sender by new { sender.Name, sender.Id } into g
                 select new { Id = g.Key.Id, Name = g.Key.Name })
                 .Union(
                 from cm in _context.Chat_Messages
                 join sender in _context.Users on cm.Sender_ID equals sender.Id
                 join receiver in _context.Users on cm.Receiver_ID equals receiver.Id
-                where sender.Id == 1
+                where sender.Id == id
                 group receiver by new { receiver.Name, receiver.Id } into g
                 select new { Id = g.Key.Id, Name = g.Key.Name }
                 );

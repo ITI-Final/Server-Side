@@ -1,7 +1,9 @@
 ﻿using APIApp.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIApp.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -24,8 +26,6 @@ namespace APIApp.Controllers
             _jwt = jwt;
         }
         #endregion
-
-        #region Methods
 
         #region Authentication
 
@@ -64,7 +64,6 @@ namespace APIApp.Controllers
         #endregion
 
         #region Register
-
         [HttpPost("register")]
         public async Task<IActionResult> AddUser(UserRegister userRegister)
         {
@@ -143,6 +142,7 @@ namespace APIApp.Controllers
         #endregion
 
         #region Change Password
+        [Authorize(Roles = "User")]
         [HttpPost("changepassword")]
         public async Task<IActionResult> ChangePassword([FromForm] ChanegPassword model, int id)
         {
@@ -176,7 +176,9 @@ namespace APIApp.Controllers
         #endregion
 
         #region Get
+        [Authorize(Roles = "Admin")]
         [HttpGet]
+
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int? page)
         {
             int? pageSize = 10;
@@ -197,7 +199,7 @@ namespace APIApp.Controllers
 
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
             if (await _userRepository.GetAll() == null)
@@ -229,6 +231,7 @@ namespace APIApp.Controllers
 
         #region Add
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUser(UserDto userDto)
         {
             if (await _userRepository.IsEmailTakenAsync(userDto.Email))
@@ -254,7 +257,9 @@ namespace APIApp.Controllers
         }
         #endregion
 
+
         #region Update
+        [Authorize(Roles = "User")]
         [HttpPut("id")]
         public async Task<IActionResult> UpdateUser([FromBody] UserDto userDto, int id)
         {
@@ -289,7 +294,7 @@ namespace APIApp.Controllers
         #endregion
 
         #region Delete
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("id")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -310,6 +315,7 @@ namespace APIApp.Controllers
         }
         #endregion
 
-        #endregion
+
     }
 }
+

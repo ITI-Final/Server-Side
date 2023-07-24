@@ -20,6 +20,8 @@ namespace APIApp.AutoMapper
             CreateMap<Governorate, GovernorateDTO>()
                     .ForMember(dest => dest.cities, opt => opt.MapFrom(src => src.Cities));
             CreateMap<City, CitiesDTO>();
+            CreateMap<City, CityPostDTO>();
+            CreateMap<Governorate, GovernoratePostDTO>();
             CreateMap<PostDTO, Post>();
             CreateMap<imagesDTO, Post_Image>();
             CreateMap<AdminDTO, Admin>();

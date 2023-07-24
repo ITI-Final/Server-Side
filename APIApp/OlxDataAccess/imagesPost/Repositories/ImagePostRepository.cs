@@ -9,6 +9,12 @@
         {
             _dbContext = context;
         }
+
+        public override async Task<IEnumerable<Post_Image>> GetAll()
+        {
+            return await _dbContext.Post_Images.OrderBy(r => Guid.NewGuid()).Take(6).ToListAsync();
+        }
+
         public async Task addmultImage(List<Post_Image> p)
         {
 
@@ -32,7 +38,7 @@
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\upload\postImages", special + "-" + file.FileName);
             using (FileStream ms = new FileStream(filePath, FileMode.Create))
             {
-                file.CopyToAsync(ms);
+                await file.CopyToAsync(ms);
             }
             var filename = special + "-" + file.FileName;
             //  return $"{filename}";

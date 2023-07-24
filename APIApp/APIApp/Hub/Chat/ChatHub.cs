@@ -1,41 +1,55 @@
-﻿using System.Collections.Immutable;
-
-namespace OlxDataAccess
+﻿namespace OlxDataAccess
 {
     internal class ChatHub : Hub
     {
         #region Fileds
-        private readonly OLXContext _oLXContext;
+        private readonly OLXContext _context;
+        protected readonly IUserRepository _userRepository;
+
         #endregion
 
         #region Constructors
-        public ChatHub(OLXContext oLXContext)
+        public ChatHub(OLXContext oLXContext, IUserRepository userRepository)
         {
-            _oLXContext = oLXContext;
+            _context = oLXContext;
+            _userRepository = userRepository;
         }
         #endregion
 
         #region Method
 
         #region Send Message
-        public async void SendMessage(Chat_Message chat)
+        public  async void  SendMessage(Chat_Message chat)
         {
+
+            #region Error Ya Salmaaaaa !!!!!!!!!!!!!
+            // ObjectDisposedException: 'Cannot access a disposed context instance.
+            // A common cause of this error is disposing a context instance that was
+            // resolved from dependency injection and then later trying to use the same context
+            // instance elsewhere in your application.
+            // This may occur if you are calling 'Dispose' on the context instance,
+            // or wrapping it in a using statement.
+            // If you are using dependency injection,
+            // you should let the dependency injection container take care of disposing context
+            // instances. Object name: 'OLXContext'.'
+            #endregion
+
             #region Get Users
-            User? sender = await _oLXContext.Users.Where(u => u.Id == chat.Sender_ID).FirstOrDefaultAsync();
-            User? receiver = await _oLXContext.Users.Where(u => u.Id == chat.Receiver_ID).FirstOrDefaultAsync();
+            User? sender =  _context.Users.Where(u => u.Id == chat.Sender_ID).FirstOrDefault();
+            User? receiver =  _context.Users.Where(u => u.Id == chat.Receiver_ID).FirstOrDefault();
 
             if (sender == null || receiver == null) return;
             #endregion
 
             #region Get Recever Connections ID
-            IReadOnlyList<string> listOfConnectionsID = _oLXContext.User_Connections.Where(uc => uc.User_ID == receiver.Id).Select(uc => uc.Connection_ID).ToImmutableList();
+            IReadOnlyList<string> listOfConnectionsID = _context.User_Connections.Where(uc => uc.User_ID == receiver.Id).Select(uc => uc.Connection_ID).ToImmutableList();
             #endregion
 
             #region Save Into Database
             try
             {
-                await _oLXContext.Chat_Messages.AddAsync(chat);
-                await _oLXContext.SaveChangesAsync();
+                _context.Chat_Messages.Add(chat);
+                _context.SaveChanges();
             }
             catch (Exception)
             {
@@ -44,7 +58,9 @@ namespace OlxDataAccess
             #endregion
 
             #region Call Back Function
-            await Clients.Clients(listOfConnectionsID).SendAsync("retrieveMessage", sender.Name, chat.Message);
+            //await Clients.Clients(listOfConnectionsID).SendAsync("retrieveMessage", chat.Message,chat.Date,chat.Time,chat.Receiver_ID,chat.Sender_ID,chat.Id);
+            await Clients.Clients(listOfConnectionsID).SendAsync("retrieveMessage", chat.Message);
+
             #endregion
         }
         #endregion
@@ -56,8 +72,8 @@ namespace OlxDataAccess
             {
                 int userid = int.Parse(userId);
 
-                _oLXContext.User_Connections.Add(new User_Connection { User_ID = userid, Connection_ID = Context.ConnectionId });
-                _oLXContext.SaveChanges();
+                _context.User_Connections.Add(new User_Connection { User_ID = userid, Connection_ID = Context.ConnectionId });
+                _context.SaveChanges();
             }
 
             return base.OnConnectedAsync();
@@ -71,8 +87,8 @@ namespace OlxDataAccess
             {
                 int userid = int.Parse(userId);
 
-                _oLXContext.User_Connections.Remove(new User_Connection { User_ID = userid, Connection_ID = Context.ConnectionId });
-                _oLXContext.SaveChanges();
+                _context.User_Connections.Remove(new User_Connection { User_ID = userid, Connection_ID = Context.ConnectionId });
+                _context.SaveChanges();
             }
 
             return base.OnDisconnectedAsync(exception);
