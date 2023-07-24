@@ -25,7 +25,7 @@
 
         #region Get All
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page)
+        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page, bool? isSortedByPriceAscending, bool? isSortedByPriceDescending)
         {
             int? pageSize = 10;
             if (page < 1 || pageSize < 1)
@@ -34,7 +34,8 @@
             int postsCount = _postsReposirory.GetAll().Result.Count();
             if (postsCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
-            IEnumerable<Post> posts = await _postsReposirory.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? postsCount);
+
+            IQueryable<Post>? posts = _postsReposirory.GetAllWithSorting(page: page ?? 1, pageSize: pageSize ?? postsCount, isSortedByPriceAscending);
 
             int totalPages = (int)Math.Ceiling((double)postsCount / pageSize ?? postsCount);
             if (totalPages < page)
@@ -45,7 +46,6 @@
         #endregion
 
         #region Get By Id
-
         //[HttpGet("{id}")]
         //public async Task<ActionResult<Post>> GetById(int id)
         //{
