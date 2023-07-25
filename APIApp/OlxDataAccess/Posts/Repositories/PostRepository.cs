@@ -35,15 +35,15 @@
                 .Include(p => p.Post_Images);
         }
 
-        public IQueryable<Post> GetPostsInCity(int page, int pageSize, bool? isSortingAsc, string? governorate, string? city)
+        public IQueryable<Post> GetPostsInCity(int page, int pageSize, bool? isSortingAsc, int? governorateId, int? cityId)
         {
             IQueryable<Post> posts = _context.Posts;
 
-            if (governorate != null)
-                posts.Where(p => p.Post_LocationNavigation.Governorate.Governorate_Name_En == governorate);
+            if (governorateId != null)
+                posts.Where(p => p.Post_LocationNavigation.Governorate.Id == governorateId);
 
-            if (city != null)
-                posts.Where(p => p.Post_LocationNavigation.City_Name_En == city);
+            if (cityId != null)
+                posts.Where(p => p.Post_LocationNavigation.Id == cityId);
 
             if (isSortingAsc.HasValue)
                 if (isSortingAsc == true)
