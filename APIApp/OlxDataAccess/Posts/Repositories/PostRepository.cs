@@ -25,14 +25,15 @@
         {
             if (isSortingAsc.HasValue)
                 if (isSortingAsc == true)
-                    return _context.Posts.OrderBy(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
+                    return _context.Posts.Include(p => p.Post_LocationNavigation).ThenInclude(o => o.Governorate).OrderBy(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
                 else
-                    return _context.Posts.OrderByDescending(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
+                    return _context.Posts.Include(p => p.Post_LocationNavigation).ThenInclude(o => o.Governorate).OrderByDescending(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
 
             return _context.Posts
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Include(p => p.Post_Images);
+                .Include(p => p.Post_Images)
+                .Include(p => p.Post_LocationNavigation);
         }
 
         public IQueryable<Post> GetPostsInCity(int page, int pageSize, bool? isSortingAsc, string? governorate, string? city)
@@ -47,14 +48,16 @@
 
             if (isSortingAsc.HasValue)
                 if (isSortingAsc == true)
-                    return posts.OrderBy(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
+                    return posts.Include(p => p.Post_LocationNavigation).ThenInclude(o => o.Governorate).OrderBy(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
                 else
-                    return posts.OrderByDescending(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
+                    return posts.Include(p => p.Post_LocationNavigation).ThenInclude(o => o.Governorate).OrderByDescending(p => p.Price).Skip((page - 1) * pageSize).Take(pageSize);
 
             return posts
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Include(p => p.Post_Images);
+                .Include(p => p.Post_Images)
+                .Include(p => p.Post_LocationNavigation)
+                .ThenInclude(o => o.Governorate);
         }
 
     }

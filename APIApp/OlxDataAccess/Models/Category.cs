@@ -32,6 +32,7 @@ namespace OlxDataAccess.Models
         public string Slug { get; set; }
         public string Description { get; set; }
         public string Tags { get; set; }
+        public string Icon { get; set; }
         public int? Admin_Id { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? Created_Date { get; set; }

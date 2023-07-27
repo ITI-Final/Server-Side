@@ -230,7 +230,6 @@ namespace APIApp.Controllers
 
         #region Add
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUser(UserDto userDto)
         {
             if (await _userRepository.IsEmailTakenAsync(userDto.Email))
