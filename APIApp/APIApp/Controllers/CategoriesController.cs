@@ -76,6 +76,9 @@ namespace APIApp.Controllers
                     Name = item.Name,
                     Label = item.Label,
                     Label_Ar = item.Label_Ar,
+                    Icon = item.Icon,
+                    Parent = item.Parent_Id,
+                    Slug = item.Slug,
                 };
                 getCategortNameDTOs.Add(names);
             }
