@@ -38,6 +38,7 @@
             return await _dbSet
                 .Include(c => c.Companies)
                 .Include(f => f.Favorites)
+                .ThenInclude(d => d.Post)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 

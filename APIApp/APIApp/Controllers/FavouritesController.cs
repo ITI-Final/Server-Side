@@ -51,6 +51,16 @@
             return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, favourite));
 
         }
+
+        [HttpGet("{user_id}/{post_id}")]
+        public async Task<ActionResult<Favorite>> GetByPostAndUser(int user_id , int post_id)
+        {
+            Favorite favourite = await _favouriteRepositort.GetByPostAndUser(user_id, post_id);
+
+            //return Ok(favourite);
+            return Ok(AppConstants.Response<object>(AppConstants.successCode, AppConstants.getSuccessMessage, 1, 1, 1, favourite));
+
+        }
         #endregion
 
         #region Post
