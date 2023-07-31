@@ -35,7 +35,7 @@
             if (companiesCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            IEnumerable<Company> companies = await _companyRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? companiesCount);
+            IQueryable<Company> companies = await _companyRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? companiesCount);
 
             int totalPages = (int)Math.Ceiling((double)companiesCount / pageSize ?? companiesCount);
             if (totalPages < page)

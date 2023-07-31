@@ -4,39 +4,24 @@
     {
         #region Fileds
         private readonly OLXContext _context;
-        protected readonly IUserRepository _userRepository;
-
         #endregion
 
         #region Constructors
-        public ChatHub(OLXContext oLXContext, IUserRepository userRepository)
+        public ChatHub(OLXContext oLXContext)
         {
             _context = oLXContext;
-            _userRepository = userRepository;
         }
         #endregion
 
         #region Method
 
         #region Send Message
-        public  async void  SendMessage(Chat_Message chat)
+        public async void SendMessage(Chat_Message chat)
         {
 
-            #region Error Ya Salmaaaaa !!!!!!!!!!!!!
-            // ObjectDisposedException: 'Cannot access a disposed context instance.
-            // A common cause of this error is disposing a context instance that was
-            // resolved from dependency injection and then later trying to use the same context
-            // instance elsewhere in your application.
-            // This may occur if you are calling 'Dispose' on the context instance,
-            // or wrapping it in a using statement.
-            // If you are using dependency injection,
-            // you should let the dependency injection container take care of disposing context
-            // instances. Object name: 'OLXContext'.'
-            #endregion
-
             #region Get Users
-            User? sender =  _context.Users.Where(u => u.Id == chat.Sender_ID).FirstOrDefault();
-            User? receiver =  _context.Users.Where(u => u.Id == chat.Receiver_ID).FirstOrDefault();
+            User? sender = _context.Users.Where(u => u.Id == chat.Sender_ID).FirstOrDefault();
+            User? receiver = _context.Users.Where(u => u.Id == chat.Receiver_ID).FirstOrDefault();
 
             if (sender == null || receiver == null) return;
             #endregion

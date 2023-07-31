@@ -176,9 +176,8 @@ namespace APIApp.Controllers
         #endregion
 
         #region Get
-        [Authorize(Roles = "Admin")]
         [HttpGet]
-
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetAllUsers(int? page)
         {
             int? pageSize = 10;
@@ -189,7 +188,7 @@ namespace APIApp.Controllers
             if (usersCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            IEnumerable<User> users = await _userRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? usersCount);
+            IQueryable<User> users = await _userRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? usersCount);
 
             int totalPages = (int)Math.Ceiling((double)usersCount / pageSize ?? usersCount);
             if (totalPages < page)
@@ -231,7 +230,6 @@ namespace APIApp.Controllers
 
         #region Add
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUser(UserDto userDto)
         {
             if (await _userRepository.IsEmailTakenAsync(userDto.Email))
@@ -256,7 +254,6 @@ namespace APIApp.Controllers
 
         }
         #endregion
-
 
         #region Update
       

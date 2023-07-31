@@ -23,7 +23,7 @@
 
         #region GetAll
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAll(int? page)
+        public async Task<ActionResult<IEnumerable<GovernorateDTO>>> GetAll(int? page, bool? isSortedByPriceAscending)
         {
             int? pageSize = 10;
             if (page < 1 || pageSize < 1)
@@ -33,7 +33,7 @@
             if (governoratesCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
 
-            IEnumerable<Governorate> governorates = await _governorateRepository.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? governoratesCount);
+            IQueryable<Governorate> governorates = _governorateRepository.GetAllWithSorting(page: page ?? 1, pageSize: pageSize ?? governoratesCount, isSortedByPriceAscending);
 
             int totalPages = (int)Math.Ceiling((double)governoratesCount / pageSize ?? governoratesCount);
             if (totalPages < page)

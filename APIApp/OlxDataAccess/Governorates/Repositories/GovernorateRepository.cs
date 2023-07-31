@@ -16,13 +16,28 @@
             return await _dbContext.Governorates.Include(o => o.Cities).ToListAsync();
         }
 
-        public override async Task<IEnumerable<Governorate>> GetAllWithPagination(int page, int pageSize)
+        public override async Task<IQueryable<Governorate>> GetAllWithPagination(int page, int pageSize)
         {
-            return await _dbContext.Governorates
+            return _dbContext.Governorates
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Include(g => g.Cities)
-                .ToListAsync();
+                .Include(g => g.Cities);
+        }
+
+
+        public IQueryable<Governorate> GetAllWithSorting(int page, int pageSize, bool? isSortingAsc)
+        {
+
+            if (isSortingAsc.HasValue)
+                if (isSortingAsc == true)
+                    return _dbContext.Governorates.OrderBy(g => g.Governorate_Name_En).Skip((page - 1) * pageSize).Take(pageSize);
+                else
+                    return _dbContext.Governorates.OrderByDescending(g => g.Governorate_Name_En).Skip((page - 1) * pageSize).Take(pageSize);
+
+            return _dbContext.Governorates
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Include(g => g.Cities);
         }
 
         public async Task<IEnumerable<Governorate>> GetAllWithOutCities()

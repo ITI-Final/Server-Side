@@ -23,10 +23,10 @@
 
         public virtual async Task<T> GetById(int id) => await _dbSet.FindAsync(id);
 
-        public virtual async Task<IEnumerable<T>> GetAllWithPagination(int page, int pageSize)
+        public virtual async Task<IQueryable<T>> GetAllWithPagination(int page, int pageSize)
         {
-            var skip = (page - 1) * pageSize;
-            return await _dbSet.Skip(skip).Take(pageSize * 1).ToListAsync();
+            int skip = (page - 1) * pageSize;
+            return _dbSet.Skip(skip).Take(pageSize * 1).AsQueryable();
         }
         #endregion
 

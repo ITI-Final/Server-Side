@@ -33,7 +33,7 @@
             int favoritesCount = _favouriteRepositort.GetAll().Result.Count();
             if (favoritesCount == 0)
                 return Ok(AppConstants.Response<string>(AppConstants.noContentCode, AppConstants.notContentMessage));
-            IEnumerable<Favorite> favorites = await _favouriteRepositort.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? favoritesCount);
+            IQueryable<Favorite> favorites = await _favouriteRepositort.GetAllWithPagination(page: page ?? 1, pageSize: pageSize ?? favoritesCount);
 
             int totalPages = (int)Math.Ceiling((double)favoritesCount / pageSize ?? favoritesCount);
             if (totalPages < page)
