@@ -259,7 +259,7 @@ namespace APIApp.Controllers
 
 
         #region Update
-        [Authorize(Roles = "User")]
+      
         [HttpPut("id")]
         public async Task<IActionResult> UpdateUser([FromBody] UserDto userDto, int id)
         {
