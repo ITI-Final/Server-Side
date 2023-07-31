@@ -25,7 +25,7 @@
 
         #region Get All
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page, bool? isSortedByPriceAscending, string? governorate, string? city)
+        public async Task<ActionResult<IEnumerable<Post>>> GetAll(int? page, bool? isSortedByPriceAscending, int? governorate, int? city)
         {
             int? pageSize = 10;
             if (page < 1 || pageSize < 1)
