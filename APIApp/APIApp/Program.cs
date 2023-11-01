@@ -121,7 +121,7 @@ namespace APIApp
             #endregion
 
             app.UseAuthorization();
-            //app.UseMiddleware<JwtMiddleWare>();
+            app.UseMiddleware<JwtMiddleWare>();
 
             app.MapHub<ChatHub>("/chat");
 
